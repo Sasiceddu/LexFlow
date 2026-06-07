@@ -1,4 +1,5 @@
 export type DatabaseHealth = {
+  seeded: boolean
   status: 'connected'
 }
 

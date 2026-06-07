@@ -9,6 +9,7 @@
     "backend:build": "npm run build --prefix backend",
     "backend:db:generate": "npm run db:generate --prefix backend",
     "backend:db:migrate": "npm run db:migrate --prefix backend",
+    "backend:db:seed": "npm run db:seed --prefix backend",
     "backend:db:studio": "npm run db:studio --prefix backend",
     "build": "npm run build --prefix frontend",
     "check": "npm run build --prefix frontend && npm run build --prefix backend",

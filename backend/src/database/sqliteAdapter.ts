@@ -24,9 +24,8 @@ function resolveDatabasePath(): string {
   const databaseUrl = process.env.DATABASE_URL ?? 'file:./dev.db'
   const sqlitePath = databaseUrl.replace(/^file:/, '')
   const backendRoot = resolve(__dirname, '..', '..')
-  const schemaRoot = resolve(backendRoot, 'prisma')
 
-  return isAbsolute(sqlitePath) ? sqlitePath : resolve(schemaRoot, sqlitePath)
+  return isAbsolute(sqlitePath) ? sqlitePath : resolve(backendRoot, sqlitePath)
 }
 
 function inferColumnType(value: unknown) {

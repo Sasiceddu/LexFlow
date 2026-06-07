@@ -8,6 +8,7 @@
     "build": "npm run db:generate && tsc -p tsconfig.json",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
     "start": "node dist/server.js",
     "typecheck": "tsc -p tsconfig.json --noEmit"
