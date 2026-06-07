@@ -2,12 +2,23 @@
   "name": "lexflow",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "electron/main.cjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "concurrently -k -n vite,electron -c cyan,green \"npm run dev --prefix frontend -- --host 127.0.0.1\" \"wait-on http://localhost:5173 && cross-env ELECTRON_START_URL=http://localhost:5173 electron .\"",
+    "build": "npm run build --prefix frontend",
+    "desktop": "npm run build --prefix frontend && electron ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "devDependencies": {
+    "concurrently": "^10.0.3",
+    "cross-env": "^10.1.0",
+    "electron": "^42.3.3",
+    "wait-on": "^9.0.10"
+  },
+  "overrides": {
+    "yauzl": "^3.3.1"
+  }
 }
