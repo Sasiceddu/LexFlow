@@ -1,11 +1,14 @@
 import { MainLayout } from './components/layout/MainLayout'
+import { QueryProvider } from './context/QueryProvider'
 import { AppRoutes } from './routes/AppRoutes'
 
 function App() {
   return (
-    <MainLayout>
-      <AppRoutes />
-    </MainLayout>
+    <QueryProvider>
+      <MainLayout>
+        <AppRoutes />
+      </MainLayout>
+    </QueryProvider>
   )
 }
 
