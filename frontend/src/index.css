@@ -202,6 +202,67 @@ h2 {
   font-size: 1rem;
 }
 
+.instance-settings-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.instance-settings-card {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-panel);
+}
+
+.instance-settings-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.instance-settings-card-header h2 {
+  margin-bottom: 4px;
+}
+
+.instance-settings-card-header p {
+  color: var(--color-muted);
+}
+
+.count-badge {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 5px 10px;
+}
+
+.section-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.section-list li {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  padding: 10px 12px;
+}
+
+.split-list {
+  display: grid;
+  gap: 12px;
+}
+
 .loading-spinner {
   display: inline-flex;
   align-items: center;
@@ -273,5 +334,13 @@ h2 {
 
   .status-card {
     grid-template-columns: 1fr;
+  }
+
+  .instance-settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .instance-settings-card-header {
+    display: grid;
   }
 }
