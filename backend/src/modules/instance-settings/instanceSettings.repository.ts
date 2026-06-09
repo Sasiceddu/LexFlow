@@ -75,6 +75,16 @@ export function findWorkflowTransitions() {
       workflowId: true,
       fromPhaseId: true,
       toPhaseId: true,
+      fromPhase: {
+        select: {
+          name: true,
+        },
+      },
+      toPhase: {
+        select: {
+          name: true,
+        },
+      },
       actionLabel: true,
       technicalKey: true,
       order: true,

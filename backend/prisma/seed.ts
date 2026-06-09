@@ -57,6 +57,118 @@ const standardMenus: SeedDropdownMenu[] = [
   },
 ] as const
 
+type SeedWorkflowTransition = {
+  actionLabel: string
+  from: (typeof standardPhases)[number]
+  technicalKey: string
+  to: (typeof standardPhases)[number]
+}
+
+const standardTransitions: SeedWorkflowTransition[] = [
+  {
+    from: 'Depositata',
+    to: 'In attesa di decreto',
+    actionLabel: 'Conferma attesa decreto',
+    technicalKey: 'deposited_to_waiting_decree',
+  },
+  {
+    from: 'In attesa di decreto',
+    to: 'Sollecito effettuato',
+    actionLabel: 'Registra sollecito',
+    technicalKey: 'waiting_decree_to_reminder',
+  },
+  {
+    from: 'Sollecito effettuato',
+    to: 'In attesa di decreto',
+    actionLabel: 'Torna in attesa decreto',
+    technicalKey: 'reminder_to_waiting_decree',
+  },
+  {
+    from: 'In attesa di decreto',
+    to: 'Integrazione richiesta',
+    actionLabel: 'Registra integrazione richiesta',
+    technicalKey: 'waiting_decree_to_integration_requested',
+  },
+  {
+    from: 'Integrazione richiesta',
+    to: 'Integrazione inviata',
+    actionLabel: 'Registra integrazione inviata',
+    technicalKey: 'integration_requested_to_integration_sent',
+  },
+  {
+    from: 'Integrazione inviata',
+    to: 'In attesa di decreto',
+    actionLabel: 'Torna in attesa decreto',
+    technicalKey: 'integration_sent_to_waiting_decree',
+  },
+  {
+    from: 'In attesa di decreto',
+    to: 'Decreto ricevuto',
+    actionLabel: 'Registra decreto ricevuto',
+    technicalKey: 'waiting_decree_to_decree_received',
+  },
+  {
+    from: 'In attesa di decreto',
+    to: 'Rifiutata',
+    actionLabel: 'Registra rifiuto',
+    technicalKey: 'waiting_decree_to_rejected',
+  },
+  {
+    from: 'In attesa di decreto',
+    to: 'Sospesa',
+    actionLabel: 'Sospendi pratica',
+    technicalKey: 'waiting_decree_to_suspended',
+  },
+  {
+    from: 'Sospesa',
+    to: 'In attesa di decreto',
+    actionLabel: 'Riattiva pratica',
+    technicalKey: 'suspended_to_waiting_decree',
+  },
+  {
+    from: 'In attesa di decreto',
+    to: 'Annullata',
+    actionLabel: 'Annulla pratica',
+    technicalKey: 'waiting_decree_to_cancelled',
+  },
+  {
+    from: 'Decreto ricevuto',
+    to: 'Decreto inviato a SCP',
+    actionLabel: 'Registra invio SCP',
+    technicalKey: 'decree_received_to_sent_scp',
+  },
+  {
+    from: 'Decreto ricevuto',
+    to: 'Sospesa',
+    actionLabel: 'Sospendi pratica',
+    technicalKey: 'decree_received_to_suspended',
+  },
+  {
+    from: 'Decreto ricevuto',
+    to: 'Annullata',
+    actionLabel: 'Annulla pratica',
+    technicalKey: 'decree_received_to_cancelled',
+  },
+  {
+    from: 'Decreto inviato a SCP',
+    to: 'In attesa di liquidazione SCP',
+    actionLabel: 'Conferma attesa liquidazione SCP',
+    technicalKey: 'sent_scp_to_waiting_scp_payment',
+  },
+  {
+    from: 'In attesa di liquidazione SCP',
+    to: 'Liquidata',
+    actionLabel: 'Registra liquidazione',
+    technicalKey: 'waiting_scp_payment_to_paid',
+  },
+  {
+    from: 'Liquidata',
+    to: 'Chiusa',
+    actionLabel: 'Chiudi pratica',
+    technicalKey: 'paid_to_closed',
+  },
+]
+
 function toTechnicalKey(label: string): string {
   return label
     .toLowerCase()
@@ -83,7 +195,7 @@ async function seedWorkflow(): Promise<void> {
     },
   })
 
-  await Promise.all(
+  const phases = await Promise.all(
     standardPhases.map((phaseName, index) =>
       prisma.workflowPhase.upsert({
         where: {
@@ -112,6 +224,46 @@ async function seedWorkflow(): Promise<void> {
         },
       }),
     ),
+  )
+
+  const phaseByName = new Map(
+    phases.map((phase) => [phase.name, phase] as const),
+  )
+
+  await Promise.all(
+    standardTransitions.map((transition, index) => {
+      const fromPhase = phaseByName.get(transition.from)
+      const toPhase = phaseByName.get(transition.to)
+
+      if (!fromPhase || !toPhase) {
+        throw new Error(`Missing phase for transition ${transition.technicalKey}`)
+      }
+
+      return prisma.workflowTransition.upsert({
+        where: {
+          workflowId_technicalKey: {
+            workflowId: workflow.id,
+            technicalKey: transition.technicalKey,
+          },
+        },
+        update: {
+          fromPhaseId: fromPhase.id,
+          toPhaseId: toPhase.id,
+          actionLabel: transition.actionLabel,
+          order: index + 1,
+          isActive: true,
+        },
+        create: {
+          workflowId: workflow.id,
+          fromPhaseId: fromPhase.id,
+          toPhaseId: toPhase.id,
+          actionLabel: transition.actionLabel,
+          technicalKey: transition.technicalKey,
+          order: index + 1,
+          isActive: true,
+        },
+      })
+    }),
   )
 }
 

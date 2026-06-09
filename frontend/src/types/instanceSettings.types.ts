@@ -32,10 +32,16 @@ export type WorkflowPhaseOverviewItem = {
 export type WorkflowTransitionOverviewItem = {
   actionLabel: string
   fromPhaseId: string
+  fromPhase: {
+    name: string
+  }
   id: string
   order: number
   technicalKey: string
   toPhaseId: string
+  toPhase: {
+    name: string
+  }
   workflowId: string
 }
 

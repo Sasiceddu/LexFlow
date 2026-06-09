@@ -38,6 +38,26 @@ function getWorkflowSummary(
   ].join(' - ')
 }
 
+function getTransitionItems(
+  workflow: WorkflowOverviewItem,
+  overview: InstanceSettingsOverview,
+): string[] {
+  const transitions = overview.transitions.filter(
+    (transition) => transition.workflowId === workflow.id,
+  )
+  const visibleTransitions = transitions
+    .slice(0, 6)
+    .map(
+      (transition) =>
+        `${transition.actionLabel}: ${transition.fromPhase.name} -> ${transition.toPhase.name}`,
+    )
+  const hiddenCount = transitions.length - visibleTransitions.length
+
+  return hiddenCount > 0
+    ? [...visibleTransitions, `+ ${hiddenCount} transizioni configurate`]
+    : visibleTransitions
+}
+
 function getMenuSummary(
   menu: DropdownMenuOverviewItem,
   options: DropdownOptionOverviewItem[],
@@ -111,13 +131,22 @@ export function InstanceSettingsPage() {
             description="Workflow attivi, fasi ordinate e transizioni configurate."
             count={data.workflows.length}
           >
-            <SectionList
-              items={data.workflows.map((workflow) =>
-                getWorkflowSummary(workflow, data),
-              )}
-              emptyTitle="Nessun workflow"
-              emptyMessage="Non sono presenti workflow attivi nel database locale."
-            />
+            <div className="split-list">
+              <SectionList
+                items={data.workflows.map((workflow) =>
+                  getWorkflowSummary(workflow, data),
+                )}
+                emptyTitle="Nessun workflow"
+                emptyMessage="Non sono presenti workflow attivi nel database locale."
+              />
+              <SectionList
+                items={data.workflows.flatMap((workflow) =>
+                  getTransitionItems(workflow, data),
+                )}
+                emptyTitle="Nessuna transizione"
+                emptyMessage="Non sono presenti transizioni configurate per i workflow attivi."
+              />
+            </div>
           </InstanceSettingsCard>
 
           <InstanceSettingsCard
