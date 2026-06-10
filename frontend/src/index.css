@@ -26,6 +26,12 @@
   box-sizing: border-box;
 }
 
+*,
+*::before,
+*::after {
+  min-width: 0;
+}
+
 body {
   min-width: 320px;
   min-height: 100svh;
@@ -110,11 +116,13 @@ select {
 
 .app-main {
   min-width: 0;
+  width: 100%;
   padding: 32px;
 }
 
 .page-container {
-  width: min(100%, 960px);
+  width: min(100%, 1360px);
+  margin-inline: auto;
   padding: 40px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
@@ -139,6 +147,7 @@ h1,
 h2,
 p {
   margin-top: 0;
+  overflow-wrap: anywhere;
 }
 
 h1 {
@@ -205,7 +214,13 @@ h2 {
 .instance-settings-grid {
   display: grid;
   gap: 18px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+}
+
+.settings-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
 }
 
 .instance-settings-card {
@@ -255,12 +270,194 @@ h2 {
   border: 1px solid var(--color-border);
   border-radius: 8px;
   color: var(--color-text);
+  overflow-wrap: anywhere;
   padding: 10px 12px;
 }
 
 .split-list {
   display: grid;
   gap: 12px;
+}
+
+.expandable-card {
+  display: grid;
+  align-content: start;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-panel);
+}
+
+.expandable-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 16px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  font-weight: 800;
+  padding: 18px 20px;
+  text-align: left;
+}
+
+.expandable-card-header span:first-child {
+  overflow-wrap: anywhere;
+}
+
+.expandable-card-header:hover {
+  background: var(--color-accent-soft);
+}
+
+.expandable-card-indicator {
+  flex: 0 0 auto;
+  color: var(--color-accent);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.expandable-card-body {
+  display: grid;
+  gap: 16px;
+  padding: 0 20px 20px;
+}
+
+.expandable-card-subtitle,
+.section-meta {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.section-meta {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.card-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.card-toolbar button,
+.form-actions button,
+.person-actions button {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-panel);
+  color: var(--color-text);
+  cursor: pointer;
+  font-weight: 700;
+  padding: 8px 12px;
+}
+
+.card-toolbar button,
+.form-actions button[type='submit'] {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #ffffff;
+}
+
+.card-toolbar button:disabled,
+.form-actions button:disabled,
+.person-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.person-form {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: #fbfcfc;
+}
+
+.form-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.person-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.person-form input,
+.person-form textarea {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  padding: 9px 10px;
+}
+
+.person-form textarea {
+  resize: vertical;
+}
+
+.checkbox-row {
+  display: flex !important;
+  align-items: center;
+  gap: 8px !important;
+}
+
+.checkbox-row input {
+  width: auto;
+}
+
+.form-error {
+  margin: 0;
+  color: var(--color-danger);
+  font-weight: 700;
+}
+
+.form-actions,
+.person-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.people-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.people-list li {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+
+.person-summary {
+  display: grid;
+  gap: 4px;
+}
+
+.person-summary span,
+.person-summary p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.danger-button {
+  border-color: rgba(180, 35, 24, 0.35) !important;
+  color: var(--color-danger) !important;
 }
 
 .loading-spinner {
@@ -340,7 +537,15 @@ h2 {
     grid-template-columns: 1fr;
   }
 
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
   .instance-settings-card-header {
     display: grid;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
   }
 }

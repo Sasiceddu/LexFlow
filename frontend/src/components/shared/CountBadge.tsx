@@ -1,12 +1,9 @@
 type CountBadgeProps = {
-  count: number
+  count?: number
   label?: string
+  text?: string
 }
 
-export function CountBadge({ count, label = 'elementi' }: CountBadgeProps) {
-  return (
-    <span className="count-badge">
-      {count} {label}
-    </span>
-  )
+export function CountBadge({ count = 0, label = 'elementi', text }: CountBadgeProps) {
+  return <span className="count-badge">{text ?? `${count} ${label}`}</span>
 }

@@ -1,9 +1,11 @@
 import { PageContainer } from '../components/layout/PageContainer'
 import { EmptyState } from '../components/shared/EmptyState'
 import { ErrorMessage } from '../components/shared/ErrorMessage'
-import { InstanceSettingsCard } from '../components/shared/InstanceSettingsCard'
 import { LoadingSpinner } from '../components/shared/LoadingSpinner'
 import { SectionList } from '../components/shared/SectionList'
+import { ExpandableCard } from '../components/ui/ExpandableCard'
+import { CollaboratorsSettingsCard } from '../features/instance-settings/components/CollaboratorsSettingsCard'
+import { ProfessionalsSettingsCard } from '../features/instance-settings/components/ProfessionalsSettingsCard'
 import { useInstanceSettingsOverview } from '../hooks/useInstanceSettingsOverview'
 import type {
   DropdownMenuOverviewItem,
@@ -11,6 +13,7 @@ import type {
   InstanceSettingsOverview,
   WorkflowOverviewItem,
 } from '../types/instanceSettings.types'
+import { formatPluralCount, joinCountParts } from '../utils/formatCount'
 
 function getFirstItems(items: string[], limit = 5): string[] {
   return items.slice(0, limit)
@@ -71,6 +74,21 @@ function getMenuSummary(
     : `${menu.name}: nessuna opzione attiva`
 }
 
+function getWorkflowCountText(data: InstanceSettingsOverview): string {
+  return joinCountParts([
+    formatPluralCount(data.workflows.length, 'workflow', 'workflow'),
+    formatPluralCount(data.phases.length, 'fase', 'fasi'),
+    formatPluralCount(data.transitions.length, 'transizione', 'transizioni'),
+  ])
+}
+
+function getMenuCountText(data: InstanceSettingsOverview): string {
+  return joinCountParts([
+    formatPluralCount(data.dropdownMenus.length, 'menu', 'menu'),
+    formatPluralCount(data.dropdownOptions.length, 'opzione', 'opzioni'),
+  ])
+}
+
 export function InstanceSettingsPage() {
   const { data, error, isPending } = useInstanceSettingsOverview()
   const errorMessage =
@@ -81,7 +99,7 @@ export function InstanceSettingsPage() {
   return (
     <PageContainer
       title="Impostazioni istanze"
-      description="Base in sola lettura collegata al database locale."
+      description="Base collegata al database locale per configurare elementi operativi."
     >
       {isPending ? (
         <LoadingSpinner label="Caricamento impostazioni istanze" />
@@ -94,43 +112,16 @@ export function InstanceSettingsPage() {
         />
       ) : null}
 
-      {data ? (
+      {data && !isPending && !error ? (
         <div className="instance-settings-grid">
-          <InstanceSettingsCard
-            title="Professionisti"
-            description="Professionisti non cestinati disponibili per le pratiche."
-            count={data.professionals.length}
-          >
-            <SectionList
-              items={getFirstItems(
-                data.professionals.map((item) =>
-                  item.email ? `${item.displayName} - ${item.email}` : item.displayName,
-                ),
-              )}
-              emptyTitle="Nessun professionista"
-              emptyMessage="Non sono presenti professionisti nel database locale."
-            />
-          </InstanceSettingsCard>
+          <ProfessionalsSettingsCard />
+          <CollaboratorsSettingsCard />
 
-          <InstanceSettingsCard
-            title="Collaboratori di giustizia"
-            description="Collaboratori non cestinati collegabili alle pratiche."
-            count={data.collaborators.length}
-          >
-            <SectionList
-              items={getFirstItems(
-                data.collaborators.map((item) => item.displayName),
-              )}
-              emptyTitle="Nessun collaboratore"
-              emptyMessage="Non sono presenti collaboratori di giustizia nel database locale."
-            />
-          </InstanceSettingsCard>
-
-          <InstanceSettingsCard
+          <ExpandableCard
             title="Fasi e workflow"
-            description="Workflow attivi, fasi ordinate e transizioni configurate."
-            count={data.workflows.length}
+            subtitle="Workflow attivi, fasi ordinate e transizioni configurate."
           >
+            <p className="section-meta">{getWorkflowCountText(data)}</p>
             <div className="split-list">
               <SectionList
                 items={data.workflows.map((workflow) =>
@@ -147,13 +138,15 @@ export function InstanceSettingsPage() {
                 emptyMessage="Non sono presenti transizioni configurate per i workflow attivi."
               />
             </div>
-          </InstanceSettingsCard>
+          </ExpandableCard>
 
-          <InstanceSettingsCard
+          <ExpandableCard
             title="Campi configurabili"
-            description="Campi attivi divisi tra ambito generale e ambito fase."
-            count={data.configurableFields.length}
+            subtitle="Campi attivi divisi tra ambito generale e ambito fase."
           >
+            <p className="section-meta">
+              {formatPluralCount(data.configurableFields.length, 'campo', 'campi')}
+            </p>
             {data.configurableFields.length > 0 ? (
               <div className="split-list">
                 <SectionList
@@ -181,13 +174,13 @@ export function InstanceSettingsPage() {
                 message="I campi configurabili saranno disponibili dopo la configurazione iniziale."
               />
             )}
-          </InstanceSettingsCard>
+          </ExpandableCard>
 
-          <InstanceSettingsCard
+          <ExpandableCard
             title="Menu a tendina"
-            description="Menu attivi e opzioni collegate, inclusa la regola PEC."
-            count={data.dropdownMenus.length}
+            subtitle="Menu attivi e opzioni collegate, inclusa la regola PEC."
           >
+            <p className="section-meta">{getMenuCountText(data)}</p>
             <SectionList
               items={data.dropdownMenus.map((menu) =>
                 getMenuSummary(
@@ -198,7 +191,7 @@ export function InstanceSettingsPage() {
               emptyTitle="Nessun menu"
               emptyMessage="Non sono presenti menu a tendina attivi nel database locale."
             />
-          </InstanceSettingsCard>
+          </ExpandableCard>
         </div>
       ) : null}
     </PageContainer>

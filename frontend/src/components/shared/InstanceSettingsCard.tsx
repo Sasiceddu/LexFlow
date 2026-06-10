@@ -3,7 +3,8 @@ import { CountBadge } from './CountBadge'
 
 type InstanceSettingsCardProps = {
   children: ReactNode
-  count: number
+  count?: number
+  countText?: string
   description: string
   title: string
 }
@@ -11,6 +12,7 @@ type InstanceSettingsCardProps = {
 export function InstanceSettingsCard({
   children,
   count,
+  countText,
   description,
   title,
 }: InstanceSettingsCardProps) {
@@ -21,7 +23,7 @@ export function InstanceSettingsCard({
           <h2>{title}</h2>
           <p>{description}</p>
         </div>
-        <CountBadge count={count} />
+        <CountBadge count={count} text={countText} />
       </div>
       {children}
     </section>
