@@ -1,4 +1,6 @@
 import { EmptyState } from './EmptyState'
+import { Button } from '../ui/Button'
+import { ActionRow } from './ActionRow'
 
 export type ManagedPersonItem = {
   displayName: string
@@ -41,21 +43,17 @@ export function PeopleList<TPerson extends ManagedPersonItem>({
             {person.phone ? <span>{person.phone}</span> : null}
             {person.notes ? <p>{person.notes}</p> : null}
           </div>
-          <div className="person-actions">
-            <button type="button" onClick={() => onEdit(person)}>
+          <ActionRow>
+            <Button onClick={() => onEdit(person)}>
               Modifica
-            </button>
-            <button type="button" onClick={() => onToggleActive(person)}>
+            </Button>
+            <Button onClick={() => onToggleActive(person)}>
               {person.isActive ? 'Disattiva' : 'Attiva'}
-            </button>
-            <button
-              type="button"
-              className="danger-button"
-              onClick={() => onDelete(person)}
-            >
+            </Button>
+            <Button variant="danger" onClick={() => onDelete(person)}>
               Cestina
-            </button>
-          </div>
+            </Button>
+          </ActionRow>
         </li>
       ))}
     </ul>

@@ -1,4 +1,11 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { Button } from '../ui/Button'
+import { Checkbox } from '../ui/Checkbox'
+import { FormField } from '../ui/FormField'
+import { Input } from '../ui/Input'
+import { Textarea } from '../ui/Textarea'
+import { ActionRow } from './ActionRow'
+import { FormErrorMessage } from './FormErrorMessage'
 
 export type PersonFormValues = {
   email: string
@@ -61,9 +68,8 @@ export function PersonForm({
   return (
     <form className="person-form" onSubmit={handleSubmit}>
       <div className="form-grid">
-        <label>
-          <span>Nome</span>
-          <input
+        <FormField label="Nome">
+          <Input
             value={values.firstName}
             onChange={(event) =>
               setValues((current) => ({
@@ -73,10 +79,9 @@ export function PersonForm({
             }
             disabled={isSaving}
           />
-        </label>
-        <label>
-          <span>Cognome</span>
-          <input
+        </FormField>
+        <FormField label="Cognome">
+          <Input
             value={values.lastName}
             onChange={(event) =>
               setValues((current) => ({
@@ -86,12 +91,11 @@ export function PersonForm({
             }
             disabled={isSaving}
           />
-        </label>
+        </FormField>
         {isProfessional ? (
           <>
-            <label>
-              <span>Email</span>
-              <input
+            <FormField label="Email">
+              <Input
                 type="email"
                 value={values.email}
                 onChange={(event) =>
@@ -102,10 +106,9 @@ export function PersonForm({
                 }
                 disabled={isSaving}
               />
-            </label>
-            <label>
-              <span>Telefono</span>
-              <input
+            </FormField>
+            <FormField label="Telefono">
+              <Input
                 value={values.phone}
                 onChange={(event) =>
                   setValues((current) => ({
@@ -115,13 +118,12 @@ export function PersonForm({
                 }
                 disabled={isSaving}
               />
-            </label>
+            </FormField>
           </>
         ) : null}
       </div>
-      <label>
-        <span>Note</span>
-        <textarea
+      <FormField label="Note">
+        <Textarea
           value={values.notes}
           onChange={(event) =>
             setValues((current) => ({ ...current, notes: event.target.value }))
@@ -129,32 +131,29 @@ export function PersonForm({
           disabled={isSaving}
           rows={3}
         />
-      </label>
-      <label className="checkbox-row">
-        <input
-          type="checkbox"
-          checked={values.isActive}
-          onChange={(event) =>
-            setValues((current) => ({
-              ...current,
-              isActive: event.target.checked,
-            }))
-          }
-          disabled={isSaving}
-        />
-        <span>Attivo</span>
-      </label>
+      </FormField>
+      <Checkbox
+        label="Attivo"
+        checked={values.isActive}
+        onChange={(event) =>
+          setValues((current) => ({
+            ...current,
+            isActive: event.target.checked,
+          }))
+        }
+        disabled={isSaving}
+      />
       {localError || errorMessage ? (
-        <p className="form-error">{localError ?? errorMessage}</p>
+        <FormErrorMessage message={localError ?? errorMessage ?? ''} />
       ) : null}
-      <div className="form-actions">
-        <button type="submit" disabled={isSaving}>
+      <ActionRow>
+        <Button type="submit" disabled={isSaving} variant="primary">
           {isSaving ? 'Salvataggio...' : 'Salva'}
-        </button>
-        <button type="button" onClick={onCancel} disabled={isSaving}>
+        </Button>
+        <Button onClick={onCancel} disabled={isSaving}>
           Annulla
-        </button>
-      </div>
+        </Button>
+      </ActionRow>
     </form>
   )
 }

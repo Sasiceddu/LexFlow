@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ConfirmDialog } from '../../../components/shared/ConfirmDialog'
 import { ErrorMessage } from '../../../components/shared/ErrorMessage'
 import { LoadingSpinner } from '../../../components/shared/LoadingSpinner'
 import {
@@ -9,7 +10,9 @@ import {
   PersonForm,
   type PersonFormValues,
 } from '../../../components/shared/PersonForm'
+import { Button } from '../../../components/ui/Button'
 import { ExpandableCard } from '../../../components/ui/ExpandableCard'
+import { useDisclosure } from '../../../hooks/useDisclosure'
 import { toPersonFormValues } from '../../../utils/personForm'
 
 export type EditablePerson = ManagedPersonItem & {
@@ -60,6 +63,8 @@ export function ManagedPeopleCard<TPerson extends EditablePerson>({
   const [activeId, setActiveId] = useState<string | undefined>()
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [actionError, setActionError] = useState<string | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<TPerson | null>(null)
+  const deleteDialog = useDisclosure()
   const activePerson = activeId
     ? items.find((item) => item.id === activeId)
     : undefined
@@ -76,15 +81,17 @@ export function ManagedPeopleCard<TPerson extends EditablePerson>({
     }
   }
 
-  async function handleDelete(person: TPerson) {
-    if (!window.confirm(deleteConfirmLabel(person))) {
+  async function handleConfirmDelete() {
+    if (!deleteTarget) {
       return
     }
 
     setActionError(null)
 
     try {
-      await onDelete(person)
+      await onDelete(deleteTarget)
+      setDeleteTarget(null)
+      deleteDialog.close()
     } catch (deleteError: unknown) {
       setActionError(
         getErrorMessage(deleteError, 'Impossibile spostare nel cestino.'),
@@ -112,8 +119,8 @@ export function ManagedPeopleCard<TPerson extends EditablePerson>({
       <p className="section-meta">{countText}</p>
 
       <div className="card-toolbar">
-        <button
-          type="button"
+        <Button
+          variant="primary"
           onClick={() => {
             setActiveId(undefined)
             setIsFormOpen(true)
@@ -121,7 +128,7 @@ export function ManagedPeopleCard<TPerson extends EditablePerson>({
           }}
         >
           {addLabel}
-        </button>
+        </Button>
       </div>
 
       {isLoading ? <LoadingSpinner label={`Caricamento ${title}`} /> : null}
@@ -157,7 +164,10 @@ export function ManagedPeopleCard<TPerson extends EditablePerson>({
           items={items}
           emptyTitle={emptyTitle}
           emptyMessage={emptyMessage}
-          onDelete={(person) => void handleDelete(person)}
+          onDelete={(person) => {
+            setDeleteTarget(person)
+            deleteDialog.open()
+          }}
           onEdit={(person) => {
             setActiveId(person.id)
             setIsFormOpen(true)
@@ -166,6 +176,23 @@ export function ManagedPeopleCard<TPerson extends EditablePerson>({
           onToggleActive={(person) => void handleToggleActive(person)}
         />
       ) : null}
+
+      <ConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        isConfirming={isSaving}
+        title="Conferma spostamento nel cestino"
+        message={
+          deleteTarget
+            ? deleteConfirmLabel(deleteTarget)
+            : 'Confermare lo spostamento nel cestino?'
+        }
+        confirmLabel="Cestina"
+        onCancel={() => {
+          setDeleteTarget(null)
+          deleteDialog.close()
+        }}
+        onConfirm={() => void handleConfirmDelete()}
+      />
     </ExpandableCard>
   )
 }
