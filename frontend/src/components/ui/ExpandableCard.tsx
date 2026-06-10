@@ -8,7 +8,7 @@ type ExpandableCardProps = {
   title: string
 }
 
-// Long LexFlow sections should prefer ExpandableCard to keep pages compact and readable.
+// Main LexFlow sections use a vertical list of ExpandableCard; grids belong inside expanded content.
 export function ExpandableCard({
   children,
   defaultOpen = false,
