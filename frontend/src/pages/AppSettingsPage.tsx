@@ -8,7 +8,7 @@ export function AppSettingsPage() {
       title="Impostazioni app"
       description="Preferenze tecniche dell'app desktop locale."
     >
-      <div className="settings-grid">
+      <div className="responsive-grid settings-grid">
         <ExpandableCard
           title="Preferenze applicazione"
           subtitle="Area pronta per le configurazioni tecniche dell'app desktop locale."

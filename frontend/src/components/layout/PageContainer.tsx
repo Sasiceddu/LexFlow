@@ -12,7 +12,7 @@ export function PageContainer({
   title,
 }: PageContainerProps) {
   return (
-    <section className="page-container" aria-labelledby="page-title">
+    <section className="page-shell page-container" aria-labelledby="page-title">
       <div className="page-heading">
         <p className="page-eyebrow">Struttura frontend</p>
         <h1 id="page-title">{title}</h1>

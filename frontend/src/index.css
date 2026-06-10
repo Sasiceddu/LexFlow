@@ -51,7 +51,7 @@ select {
 
 .app-shell {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-columns: clamp(240px, 18vw, 300px) minmax(0, 1fr);
   min-height: 100svh;
 }
 
@@ -59,6 +59,7 @@ select {
   display: flex;
   flex-direction: column;
   gap: 28px;
+  min-width: 0;
   border-right: 1px solid var(--color-border);
   background: var(--color-panel);
   padding: 24px;
@@ -104,6 +105,7 @@ select {
   border-radius: 8px;
   color: var(--color-muted);
   font-weight: 600;
+  overflow-wrap: anywhere;
   padding: 10px 12px;
   text-decoration: none;
 }
@@ -115,15 +117,22 @@ select {
 }
 
 .app-main {
+  display: flex;
+  align-items: stretch;
   min-width: 0;
   width: 100%;
-  padding: 32px;
+  padding: clamp(20px, 2.4vw, 40px);
+}
+
+.page-shell {
+  width: 100%;
+  max-width: 1800px;
+  margin-inline: auto;
 }
 
 .page-container {
-  width: min(100%, 1360px);
-  margin-inline: auto;
-  padding: 40px;
+  min-width: 0;
+  padding: clamp(24px, 2.5vw, 44px);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   background: var(--color-panel);
@@ -211,16 +220,13 @@ h2 {
   font-size: 1rem;
 }
 
-.instance-settings-grid {
-  display: grid;
-  gap: 18px;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
-}
-
+.responsive-grid,
+.instance-settings-grid,
 .settings-grid {
   display: grid;
   gap: 18px;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+  width: 100%;
 }
 
 .instance-settings-card {
@@ -282,6 +288,7 @@ h2 {
 .expandable-card {
   display: grid;
   align-content: start;
+  min-width: 0;
   overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: 8px;
@@ -293,6 +300,7 @@ h2 {
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  min-width: 0;
   gap: 16px;
   border: 0;
   background: transparent;
@@ -321,6 +329,7 @@ h2 {
 .expandable-card-body {
   display: grid;
   gap: 16px;
+  min-width: 0;
   padding: 0 20px 20px;
 }
 
@@ -338,6 +347,7 @@ h2 {
 .card-toolbar {
   display: flex;
   flex-wrap: wrap;
+  gap: 8px;
   justify-content: flex-start;
 }
 
@@ -370,6 +380,7 @@ h2 {
 .person-form {
   display: grid;
   gap: 14px;
+  min-width: 0;
   padding: 16px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
@@ -429,6 +440,7 @@ h2 {
 .people-list {
   display: grid;
   gap: 10px;
+  min-width: 0;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -494,7 +506,15 @@ h2 {
   }
 }
 
-@media (max-width: 640px) {
+@media (min-width: 1500px) {
+  .responsive-grid,
+  .instance-settings-grid,
+  .settings-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  }
+}
+
+@media (max-width: 760px) {
   .app-shell {
     grid-template-columns: 1fr;
   }
@@ -518,11 +538,11 @@ h2 {
   }
 
   .app-main {
-    padding: 20px;
+    padding: 16px;
   }
 
   .page-container {
-    padding: 28px;
+    padding: 22px;
   }
 
   h1 {
@@ -533,10 +553,8 @@ h2 {
     grid-template-columns: 1fr;
   }
 
-  .instance-settings-grid {
-    grid-template-columns: 1fr;
-  }
-
+  .responsive-grid,
+  .instance-settings-grid,
   .settings-grid {
     grid-template-columns: 1fr;
   }

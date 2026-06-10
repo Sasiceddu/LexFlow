@@ -113,7 +113,7 @@ export function InstanceSettingsPage() {
       ) : null}
 
       {data && !isPending && !error ? (
-        <div className="instance-settings-grid">
+        <div className="responsive-grid instance-settings-grid">
           <ProfessionalsSettingsCard />
           <CollaboratorsSettingsCard />
 
