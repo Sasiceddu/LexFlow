@@ -1,5 +1,6 @@
 import express from 'express'
 import { collaboratorRouter } from './modules/collaborators/collaborator.routes'
+import { configurableFieldRouter } from './modules/configurable-fields/configurableField.routes'
 import {
   dropdownMenuRouter,
   dropdownOptionRouter,
@@ -18,6 +19,7 @@ export function createApp() {
   app.use(express.json())
   app.use('/api', healthRouter)
   app.use('/api/collaborators', collaboratorRouter)
+  app.use('/api/configurable-fields', configurableFieldRouter)
   app.use('/api/dropdown-menus', dropdownMenuRouter)
   app.use('/api/dropdown-options', dropdownOptionRouter)
   app.use('/api/instance-settings', instanceSettingsRouter)

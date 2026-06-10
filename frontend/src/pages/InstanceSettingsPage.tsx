@@ -1,10 +1,10 @@
 import { PageContainer } from '../components/layout/PageContainer'
-import { EmptyState } from '../components/shared/EmptyState'
 import { ErrorMessage } from '../components/shared/ErrorMessage'
 import { LoadingSpinner } from '../components/shared/LoadingSpinner'
 import { SectionList } from '../components/shared/SectionList'
 import { ExpandableCard } from '../components/ui/ExpandableCard'
 import { CollaboratorsSettingsCard } from '../features/instance-settings/components/CollaboratorsSettingsCard'
+import { ConfigurableFieldsSettingsCard } from '../features/instance-settings/components/ConfigurableFieldsSettingsCard'
 import { DropdownMenusSettingsCard } from '../features/instance-settings/components/DropdownMenusSettingsCard'
 import { ProfessionalsSettingsCard } from '../features/instance-settings/components/ProfessionalsSettingsCard'
 import { useInstanceSettingsOverview } from '../hooks/useInstanceSettingsOverview'
@@ -12,11 +12,7 @@ import type {
   InstanceSettingsOverview,
   WorkflowOverviewItem,
 } from '../types/instanceSettings.types'
-import { formatPluralCount, joinCountParts } from '../utils/formatCount'
-
-function getFirstItems(items: string[], limit = 5): string[] {
-  return items.slice(0, limit)
-}
+import { joinCountParts, formatPluralCount } from '../utils/formatCount'
 
 function getWorkflowSummary(
   workflow: WorkflowOverviewItem,
@@ -119,41 +115,7 @@ export function InstanceSettingsPage() {
             </div>
           </ExpandableCard>
 
-          <ExpandableCard
-            title="Campi configurabili"
-            subtitle="Campi attivi divisi tra ambito generale e ambito fase."
-          >
-            <p className="section-meta">
-              {formatPluralCount(data.configurableFields.length, 'campo', 'campi')}
-            </p>
-            {data.configurableFields.length > 0 ? (
-              <div className="split-list">
-                <SectionList
-                  items={getFirstItems(
-                    data.configurableFields
-                      .filter((field) => field.scope === 'GENERAL')
-                      .map((field) => `${field.label} (${field.sectionKey})`),
-                  )}
-                  emptyTitle="Nessun campo GENERAL"
-                  emptyMessage="Non sono presenti campi generali configurabili."
-                />
-                <SectionList
-                  items={getFirstItems(
-                    data.configurableFields
-                      .filter((field) => field.scope === 'PHASE')
-                      .map((field) => `${field.label} (${field.sectionKey})`),
-                  )}
-                  emptyTitle="Nessun campo PHASE"
-                  emptyMessage="Non sono presenti campi configurabili per fase."
-                />
-              </div>
-            ) : (
-              <EmptyState
-                title="Nessun campo configurabile"
-                message="I campi configurabili saranno disponibili dopo la configurazione iniziale."
-              />
-            )}
-          </ExpandableCard>
+          <ConfigurableFieldsSettingsCard />
 
           <DropdownMenusSettingsCard />
         </div>
