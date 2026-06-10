@@ -1,68 +1,12 @@
 import { PageContainer } from '../components/layout/PageContainer'
 import { ErrorMessage } from '../components/shared/ErrorMessage'
 import { LoadingSpinner } from '../components/shared/LoadingSpinner'
-import { SectionList } from '../components/shared/SectionList'
-import { ExpandableCard } from '../components/ui/ExpandableCard'
 import { CollaboratorsSettingsCard } from '../features/instance-settings/components/CollaboratorsSettingsCard'
 import { ConfigurableFieldsSettingsCard } from '../features/instance-settings/components/ConfigurableFieldsSettingsCard'
 import { DropdownMenusSettingsCard } from '../features/instance-settings/components/DropdownMenusSettingsCard'
 import { ProfessionalsSettingsCard } from '../features/instance-settings/components/ProfessionalsSettingsCard'
+import { WorkflowsSettingsCard } from '../features/instance-settings/components/WorkflowsSettingsCard'
 import { useInstanceSettingsOverview } from '../hooks/useInstanceSettingsOverview'
-import type {
-  InstanceSettingsOverview,
-  WorkflowOverviewItem,
-} from '../types/instanceSettings.types'
-import { joinCountParts, formatPluralCount } from '../utils/formatCount'
-
-function getWorkflowSummary(
-  workflow: WorkflowOverviewItem,
-  overview: InstanceSettingsOverview,
-): string {
-  const phases = overview.phases.filter((phase) => phase.workflowId === workflow.id)
-  const initialPhase = phases.find((phase) => phase.isInitial)
-  const finalPhases = phases.filter((phase) => phase.isFinal)
-  const transitions = overview.transitions.filter(
-    (transition) => transition.workflowId === workflow.id,
-  )
-
-  return [
-    workflow.name,
-    initialPhase ? `iniziale: ${initialPhase.name}` : 'iniziale: non definita',
-    finalPhases.length > 0
-      ? `finali: ${finalPhases.map((phase) => phase.name).join(', ')}`
-      : 'finali: non definite',
-    `${phases.length} fasi`,
-    `${transitions.length} transizioni`,
-  ].join(' - ')
-}
-
-function getTransitionItems(
-  workflow: WorkflowOverviewItem,
-  overview: InstanceSettingsOverview,
-): string[] {
-  const transitions = overview.transitions.filter(
-    (transition) => transition.workflowId === workflow.id,
-  )
-  const visibleTransitions = transitions
-    .slice(0, 6)
-    .map(
-      (transition) =>
-        `${transition.actionLabel}: ${transition.fromPhase.name} -> ${transition.toPhase.name}`,
-    )
-  const hiddenCount = transitions.length - visibleTransitions.length
-
-  return hiddenCount > 0
-    ? [...visibleTransitions, `+ ${hiddenCount} transizioni configurate`]
-    : visibleTransitions
-}
-
-function getWorkflowCountText(data: InstanceSettingsOverview): string {
-  return joinCountParts([
-    formatPluralCount(data.workflows.length, 'workflow', 'workflow'),
-    formatPluralCount(data.phases.length, 'fase', 'fasi'),
-    formatPluralCount(data.transitions.length, 'transizione', 'transizioni'),
-  ])
-}
 
 export function InstanceSettingsPage() {
   const { data, error, isPending } = useInstanceSettingsOverview()
@@ -91,32 +35,8 @@ export function InstanceSettingsPage() {
         <div className="expandable-section-list instance-settings-sections">
           <ProfessionalsSettingsCard />
           <CollaboratorsSettingsCard />
-
-          <ExpandableCard
-            title="Fasi e workflow"
-            subtitle="Workflow attivi, fasi ordinate e transizioni configurate."
-          >
-            <p className="section-meta">{getWorkflowCountText(data)}</p>
-            <div className="split-list">
-              <SectionList
-                items={data.workflows.map((workflow) =>
-                  getWorkflowSummary(workflow, data),
-                )}
-                emptyTitle="Nessun workflow"
-                emptyMessage="Non sono presenti workflow attivi nel database locale."
-              />
-              <SectionList
-                items={data.workflows.flatMap((workflow) =>
-                  getTransitionItems(workflow, data),
-                )}
-                emptyTitle="Nessuna transizione"
-                emptyMessage="Non sono presenti transizioni configurate per i workflow attivi."
-              />
-            </div>
-          </ExpandableCard>
-
+          <WorkflowsSettingsCard />
           <ConfigurableFieldsSettingsCard />
-
           <DropdownMenusSettingsCard />
         </div>
       ) : null}

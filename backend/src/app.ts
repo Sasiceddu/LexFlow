@@ -8,6 +8,11 @@ import {
 import { healthRouter } from './modules/health/health.routes'
 import { instanceSettingsRouter } from './modules/instance-settings/instanceSettings.routes'
 import { professionalRouter } from './modules/professionals/professional.routes'
+import {
+  workflowPhaseRouter,
+  workflowRouter,
+  workflowTransitionRouter,
+} from './modules/workflows/workflow.routes'
 import { corsMiddleware } from './middlewares/cors.middleware'
 import { errorMiddleware } from './middlewares/error.middleware'
 import { notFoundMiddleware } from './middlewares/notFound.middleware'
@@ -24,6 +29,9 @@ export function createApp() {
   app.use('/api/dropdown-options', dropdownOptionRouter)
   app.use('/api/instance-settings', instanceSettingsRouter)
   app.use('/api/professionals', professionalRouter)
+  app.use('/api/workflows', workflowRouter)
+  app.use('/api/workflow-phases', workflowPhaseRouter)
+  app.use('/api/workflow-transitions', workflowTransitionRouter)
   app.use(notFoundMiddleware)
   app.use(errorMiddleware)
 
