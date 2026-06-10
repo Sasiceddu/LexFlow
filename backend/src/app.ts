@@ -7,6 +7,7 @@ import {
 } from './modules/dropdown-menus/dropdownMenu.routes'
 import { healthRouter } from './modules/health/health.routes'
 import { instanceSettingsRouter } from './modules/instance-settings/instanceSettings.routes'
+import { practiceRouter } from './modules/practices/practice.routes'
 import { professionalRouter } from './modules/professionals/professional.routes'
 import {
   workflowPhaseRouter,
@@ -28,6 +29,7 @@ export function createApp() {
   app.use('/api/dropdown-menus', dropdownMenuRouter)
   app.use('/api/dropdown-options', dropdownOptionRouter)
   app.use('/api/instance-settings', instanceSettingsRouter)
+  app.use('/api/practices', practiceRouter)
   app.use('/api/professionals', professionalRouter)
   app.use('/api/workflows', workflowRouter)
   app.use('/api/workflow-phases', workflowPhaseRouter)
