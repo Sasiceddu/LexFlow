@@ -1,21 +1,11 @@
 import type { Request, Response } from 'express'
-import { AppError } from '../../errors/AppError'
 import {
   addProfessional,
   editProfessional,
   listProfessionals,
   removeProfessional,
 } from './professional.service'
-
-function getIdParam(request: Request): string {
-  const id = request.params.id
-
-  if (typeof id !== 'string' || id.trim().length === 0) {
-    throw new AppError('Identificativo professionista non valido.', 400)
-  }
-
-  return id
-}
+import { getParam } from '../../utils/requestParams'
 
 export async function getProfessionals(
   _request: Request,
@@ -35,12 +25,19 @@ export async function patchProfessional(
   request: Request,
   response: Response,
 ): Promise<void> {
-  response.json(await editProfessional(getIdParam(request), request.body))
+  response.json(
+    await editProfessional(
+      getParam(request, 'id', 'Identificativo professionista'),
+      request.body,
+    ),
+  )
 }
 
 export async function deleteProfessional(
   request: Request,
   response: Response,
 ): Promise<void> {
-  response.json(await removeProfessional(getIdParam(request)))
+  response.json(
+    await removeProfessional(getParam(request, 'id', 'Identificativo professionista')),
+  )
 }

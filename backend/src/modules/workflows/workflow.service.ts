@@ -1,5 +1,4 @@
 import { AppError } from '../../errors/AppError'
-import { ZodError } from 'zod'
 import {
   workflowCreateSchema,
   workflowPhaseCreateSchema,
@@ -42,39 +41,8 @@ import type {
   WorkflowTransitionPayload,
   WorkflowTransitionUpdatePayload,
 } from './workflow.types'
-
-function toAppError(error: unknown): AppError {
-  if (error instanceof AppError) {
-    return error
-  }
-
-  if (error instanceof ZodError) {
-    return new AppError(
-      error.issues.map((issue) => issue.message).join('; '),
-      400,
-    )
-  }
-
-  return new AppError('Dati workflow non validi', 400)
-}
-
-function normalizeKey(value: string): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '')
-}
-
-function normalizeTechnicalKey(label: string, technicalKey?: string): string {
-  const normalized = technicalKey?.trim()
-
-  return normalized && normalized.length > 0
-    ? normalizeKey(normalized)
-    : normalizeKey(label)
-}
+import { toAppError } from '../../utils/appError'
+import { normalizeTechnicalKey } from '../../utils/normalizeKey'
 
 async function assertWorkflowExists(workflowId: string) {
   const workflow = await findWorkflowById(workflowId)
@@ -232,7 +200,7 @@ export async function addWorkflow(body: unknown) {
 
     return await createWorkflow(data)
   } catch (error: unknown) {
-    throw toAppError(error)
+    throw toAppError(error, 'Dati workflow non validi')
   }
 }
 
@@ -248,7 +216,7 @@ export async function editWorkflow(id: string, body: unknown) {
 
     return await updateWorkflow(id, input)
   } catch (error: unknown) {
-    throw toAppError(error)
+    throw toAppError(error, 'Dati workflow non validi')
   }
 }
 
@@ -279,7 +247,7 @@ export async function addPhase(workflowId: string, body: unknown) {
 
     return await createWorkflowPhase(data)
   } catch (error: unknown) {
-    throw toAppError(error)
+    throw toAppError(error, 'Dati workflow non validi')
   }
 }
 
@@ -304,7 +272,7 @@ export async function editPhase(id: string, body: unknown) {
 
     return await updateWorkflowPhase(id, data)
   } catch (error: unknown) {
-    throw toAppError(error)
+    throw toAppError(error, 'Dati workflow non validi')
   }
 }
 
@@ -343,7 +311,7 @@ export async function addTransition(workflowId: string, body: unknown) {
 
     return await createWorkflowTransition(data)
   } catch (error: unknown) {
-    throw toAppError(error)
+    throw toAppError(error, 'Dati workflow non validi')
   }
 }
 
@@ -372,7 +340,7 @@ export async function editTransition(id: string, body: unknown) {
 
     return await updateWorkflowTransition(id, data)
   } catch (error: unknown) {
-    throw toAppError(error)
+    throw toAppError(error, 'Dati workflow non validi')
   }
 }
 

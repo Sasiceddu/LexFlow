@@ -7,7 +7,7 @@ import {
 } from '../../../hooks/useProfessionals'
 import type { Professional } from '../../../types/professional.types'
 import { formatPluralCount } from '../../../utils/formatCount'
-import { toOptionalText } from '../../../utils/personForm'
+import { toOptionalText } from '../../../utils/strings'
 import { ManagedPeopleCard } from './ManagedPeopleCard'
 
 function toProfessionalInput(values: PersonFormValues) {

@@ -16,6 +16,8 @@ import type {
   JsonObject,
   JsonValue,
 } from '../../../types/practice.types'
+import { getErrorMessage } from '../../../utils/errors'
+import { toOptionalText } from '../../../utils/strings'
 import {
   findDropdownMenuByTechnicalKeyOrName,
   getDropdownOptionsByMenuId,
@@ -44,16 +46,6 @@ const emptyGeneralValues: PracticeGeneralFormValues = {
   office: '',
   professionalId: '',
   requestedAmount: '',
-}
-
-function getErrorMessage(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback
-}
-
-function toOptionalText(value: string): string | null {
-  const normalized = value.trim()
-
-  return normalized.length > 0 ? normalized : null
 }
 
 function isFilledValue(value: JsonValue | undefined): boolean {

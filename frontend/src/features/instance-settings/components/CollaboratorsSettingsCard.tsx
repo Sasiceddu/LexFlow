@@ -6,7 +6,7 @@ import {
 } from '../../../hooks/useCollaborators'
 import type { Collaborator } from '../../../types/collaborator.types'
 import { formatPluralCount } from '../../../utils/formatCount'
-import { toOptionalText } from '../../../utils/personForm'
+import { toOptionalText } from '../../../utils/strings'
 import type { PersonFormValues } from '../../../components/shared/PersonForm'
 import { ManagedPeopleCard } from './ManagedPeopleCard'
 

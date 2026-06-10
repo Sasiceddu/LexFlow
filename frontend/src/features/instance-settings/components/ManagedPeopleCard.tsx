@@ -13,6 +13,7 @@ import {
 import { Button } from '../../../components/ui/Button'
 import { ExpandableCard } from '../../../components/ui/ExpandableCard'
 import { useDisclosure } from '../../../hooks/useDisclosure'
+import { getErrorMessage } from '../../../utils/errors'
 import { toPersonFormValues } from '../../../utils/personForm'
 
 export type EditablePerson = ManagedPersonItem & {
@@ -37,10 +38,6 @@ type ManagedPeopleCardProps<TPerson extends EditablePerson> = {
   onSubmit: (id: string | undefined, values: PersonFormValues) => Promise<void>
   onToggleActive: (person: TPerson) => Promise<void>
   title: string
-}
-
-function getErrorMessage(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback
 }
 
 export function ManagedPeopleCard<TPerson extends EditablePerson>({

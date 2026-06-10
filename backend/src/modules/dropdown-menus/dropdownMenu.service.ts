@@ -1,5 +1,4 @@
 import { AppError } from '../../errors/AppError'
-import { ZodError } from 'zod'
 import {
   dropdownMenuCreateSchema,
   dropdownMenuUpdateSchema,
@@ -31,31 +30,8 @@ import type {
   DropdownOptionPayload,
   DropdownOptionUpdatePayload,
 } from './dropdownMenu.types'
-
-function toAppError(error: unknown, fallback: string): AppError {
-  if (error instanceof AppError) {
-    return error
-  }
-
-  if (error instanceof ZodError) {
-    return new AppError(
-      error.issues.map((issue) => issue.message).join('; '),
-      400,
-    )
-  }
-
-  return new AppError(fallback, 400)
-}
-
-function normalizeKey(value: string): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '')
-}
+import { toAppError } from '../../utils/appError'
+import { normalizeKey } from '../../utils/normalizeKey'
 
 function normalizeMenuKey(input: DropdownMenuCreateInput | DropdownMenuUpdateInput) {
   const source = input.technicalKey ?? input.name

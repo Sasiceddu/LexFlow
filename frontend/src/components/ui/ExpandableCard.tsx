@@ -5,7 +5,6 @@ type ExpandableCardProps = {
   children: ReactNode
   defaultOpen?: boolean
   description?: string
-  subtitle?: string
   title: string
 }
 
@@ -14,11 +13,10 @@ export function ExpandableCard({
   children,
   defaultOpen = false,
   description,
-  subtitle,
   title,
 }: ExpandableCardProps) {
   const disclosure = useDisclosure(defaultOpen)
-  const helperText = description ?? subtitle
+  const helperText = description
 
   return (
     <section className="expandable-card">

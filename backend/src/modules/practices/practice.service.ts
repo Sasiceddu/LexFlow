@@ -1,4 +1,3 @@
-import { ZodError } from 'zod'
 import { AppError } from '../../errors/AppError'
 import type { Prisma } from '../../generated/prisma/client'
 import {
@@ -26,21 +25,7 @@ import {
   type PracticeCreateInput,
   type PracticeListQueryInput,
 } from './practice.validation'
-
-function toAppError(error: unknown, fallback = 'Filtri pratiche non validi.'): AppError {
-  if (error instanceof AppError) {
-    return error
-  }
-
-  if (error instanceof ZodError) {
-    return new AppError(
-      error.issues.map((issue) => issue.message).join('; '),
-      400,
-    )
-  }
-
-  return new AppError(fallback, 400)
-}
+import { toAppError } from '../../utils/appError'
 
 function normalizeFilters(input: PracticeListQueryInput): PracticeListFilters {
   return {
@@ -152,7 +137,7 @@ export async function listPractices(query: unknown): Promise<PracticeListRespons
       },
     }
   } catch (error: unknown) {
-    throw toAppError(error)
+    throw toAppError(error, 'Filtri pratiche non validi.')
   }
 }
 

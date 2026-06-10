@@ -18,16 +18,13 @@ import type {
   ConfigurableField,
   ConfigurableFieldInput,
 } from '../../../types/configurableField.types'
+import { getErrorMessage } from '../../../utils/errors'
 import { formatPluralCount } from '../../../utils/formatCount'
 import {
   ConfigurableFieldForm,
   type ConfigurableFieldFormValues,
 } from './ConfigurableFieldForm'
 import { ConfigurableFieldList } from './ConfigurableFieldList'
-
-function getErrorMessage(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback
-}
 
 function toOptionalId(value: string): string | null {
   const normalized = value.trim()

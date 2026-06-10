@@ -1,5 +1,4 @@
 import { AppError } from '../../errors/AppError'
-import { ZodError } from 'zod'
 import {
   collaboratorCreateSchema,
   collaboratorUpdateSchema,
@@ -19,33 +18,8 @@ import type {
   CollaboratorPayload,
   CollaboratorUpdatePayload,
 } from './collaborator.types'
-
-function normalizeDisplayName(
-  firstName: string,
-  lastName: string,
-  displayName?: string,
-): string {
-  const normalized = displayName?.trim()
-
-  return normalized && normalized.length > 0
-    ? normalized
-    : `${firstName.trim()} ${lastName.trim()}`.trim()
-}
-
-function toAppError(error: unknown): AppError {
-  if (error instanceof AppError) {
-    return error
-  }
-
-  if (error instanceof ZodError) {
-    return new AppError(
-      error.issues.map((issue) => issue.message).join('; '),
-      400,
-    )
-  }
-
-  return new AppError('Dati collaboratore non validi', 400)
-}
+import { toAppError } from '../../utils/appError'
+import { normalizeDisplayName } from '../../utils/normalizeDisplayName'
 
 async function ensureUniqueDisplayName(displayName: string, excludedId?: string) {
   const existing = await findCollaboratorByDisplayName(displayName, excludedId)
@@ -99,7 +73,7 @@ export async function addCollaborator(body: unknown) {
 
     return createCollaborator(data)
   } catch (error: unknown) {
-    throw toAppError(error)
+    throw toAppError(error, 'Dati collaboratore non validi')
   }
 }
 
@@ -120,7 +94,7 @@ export async function editCollaborator(id: string, body: unknown) {
 
     return updateCollaborator(id, data)
   } catch (error: unknown) {
-    throw toAppError(error)
+    throw toAppError(error, 'Dati collaboratore non validi')
   }
 }
 

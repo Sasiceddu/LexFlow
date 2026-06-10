@@ -1,5 +1,4 @@
 import { AppError } from '../../errors/AppError'
-import { ZodError } from 'zod'
 import {
   professionalCreateSchema,
   professionalUpdateSchema,
@@ -19,38 +18,13 @@ import type {
   ProfessionalPayload,
   ProfessionalUpdatePayload,
 } from './professional.types'
-
-function normalizeDisplayName(
-  firstName: string,
-  lastName: string,
-  displayName?: string,
-): string {
-  const normalized = displayName?.trim()
-
-  return normalized && normalized.length > 0
-    ? normalized
-    : `${firstName.trim()} ${lastName.trim()}`.trim()
-}
+import { toAppError } from '../../utils/appError'
+import { normalizeDisplayName } from '../../utils/normalizeDisplayName'
 
 function normalizeOptional(value: string | null | undefined): string | null {
   const normalized = value?.trim()
 
   return normalized && normalized.length > 0 ? normalized : null
-}
-
-function toAppError(error: unknown): AppError {
-  if (error instanceof AppError) {
-    return error
-  }
-
-  if (error instanceof ZodError) {
-    return new AppError(
-      error.issues.map((issue) => issue.message).join('; '),
-      400,
-    )
-  }
-
-  return new AppError('Dati professionista non validi', 400)
 }
 
 async function ensureUniqueDisplayName(displayName: string, excludedId?: string) {
@@ -111,7 +85,7 @@ export async function addProfessional(body: unknown) {
 
     return createProfessional(data)
   } catch (error: unknown) {
-    throw toAppError(error)
+    throw toAppError(error, 'Dati professionista non validi')
   }
 }
 
@@ -132,7 +106,7 @@ export async function editProfessional(id: string, body: unknown) {
 
     return updateProfessional(id, data)
   } catch (error: unknown) {
-    throw toAppError(error)
+    throw toAppError(error, 'Dati professionista non validi')
   }
 }
 

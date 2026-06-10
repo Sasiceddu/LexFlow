@@ -21,7 +21,9 @@ import type {
   DropdownMenu,
   DropdownOption,
 } from '../../../types/dropdownMenu.types'
+import { getErrorMessage } from '../../../utils/errors'
 import { formatPluralCount, joinCountParts } from '../../../utils/formatCount'
+import { toOptionalText } from '../../../utils/strings'
 import {
   DropdownMenuForm,
   type DropdownMenuFormValues,
@@ -41,16 +43,6 @@ type DeleteTarget =
   | { menu: DropdownMenu; type: 'menu' }
   | { option: DropdownOption; type: 'option' }
   | null
-
-function toOptionalText(value: string): string | null {
-  const normalized = value.trim()
-
-  return normalized.length > 0 ? normalized : null
-}
-
-function getErrorMessage(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback
-}
 
 export function DropdownMenusSettingsCard() {
   const menusQuery = useDropdownMenus()

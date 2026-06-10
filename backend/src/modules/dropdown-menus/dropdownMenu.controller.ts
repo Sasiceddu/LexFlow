@@ -1,5 +1,4 @@
 import type { Request, Response } from 'express'
-import { AppError } from '../../errors/AppError'
 import {
   addDropdownMenu,
   addDropdownOption,
@@ -10,16 +9,7 @@ import {
   removeDropdownMenu,
   removeDropdownOption,
 } from './dropdownMenu.service'
-
-function getParam(request: Request, key: string, label: string): string {
-  const value = request.params[key]
-
-  if (typeof value !== 'string' || value.trim().length === 0) {
-    throw new AppError(`${label} non valido.`, 400)
-  }
-
-  return value
-}
+import { getParam } from '../../utils/requestParams'
 
 export async function getDropdownMenus(
   _request: Request,

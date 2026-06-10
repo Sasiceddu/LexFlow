@@ -26,7 +26,9 @@ import type {
   WorkflowTransition,
   WorkflowTransitionInput,
 } from '../../../types/workflow.types'
+import { getErrorMessage } from '../../../utils/errors'
 import { formatPluralCount, joinCountParts } from '../../../utils/formatCount'
+import { toOptionalText } from '../../../utils/strings'
 import { WorkflowForm, type WorkflowFormValues } from './WorkflowForm'
 import {
   WorkflowPhaseForm,
@@ -52,16 +54,6 @@ type DeleteTarget =
   | { type: 'workflow'; workflow: Workflow }
   | { phase: WorkflowPhase; type: 'phase' }
   | null
-
-function getErrorMessage(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback
-}
-
-function toOptionalText(value: string): string | null {
-  const normalized = value.trim()
-
-  return normalized.length > 0 ? normalized : null
-}
 
 function toPhaseInput(values: WorkflowPhaseFormValues): WorkflowPhaseInput {
   return {

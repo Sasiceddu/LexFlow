@@ -1,5 +1,4 @@
 import { AppError } from '../../errors/AppError'
-import { ZodError } from 'zod'
 import {
   configurableFieldCreateSchema,
   configurableFieldUpdateSchema,
@@ -20,6 +19,8 @@ import type {
   ConfigurableFieldPayload,
   ConfigurableFieldUpdatePayload,
 } from './configurableField.types'
+import { toAppError } from '../../utils/appError'
+import { normalizeTechnicalKey } from '../../utils/normalizeKey'
 
 type CurrentConfigurableField = {
   dropdownMenuId: string | null
@@ -29,42 +30,6 @@ type CurrentConfigurableField = {
   scope: ConfigurableFieldPayload['scope']
   sectionKey: string
   technicalKey: string
-}
-
-function toAppError(error: unknown): AppError {
-  if (error instanceof AppError) {
-    return error
-  }
-
-  if (error instanceof ZodError) {
-    return new AppError(
-      error.issues.map((issue) => issue.message).join('; '),
-      400,
-    )
-  }
-
-  return new AppError('Dati campo configurabile non validi', 400)
-}
-
-function normalizeKey(value: string): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '')
-}
-
-function normalizeTechnicalKey(
-  label: string,
-  technicalKey?: string,
-): string {
-  const normalized = technicalKey?.trim()
-
-  return normalized && normalized.length > 0
-    ? normalizeKey(normalized)
-    : normalizeKey(label)
 }
 
 async function ensureUniqueTechnicalKey(
@@ -191,7 +156,7 @@ export async function addConfigurableField(body: unknown) {
 
     return await createConfigurableField(data)
   } catch (error: unknown) {
-    throw toAppError(error)
+    throw toAppError(error, 'Dati campo configurabile non validi')
   }
 }
 
@@ -227,7 +192,7 @@ export async function editConfigurableField(id: string, body: unknown) {
 
     return await updateConfigurableField(id, data)
   } catch (error: unknown) {
-    throw toAppError(error)
+    throw toAppError(error, 'Dati campo configurabile non validi')
   }
 }
 
