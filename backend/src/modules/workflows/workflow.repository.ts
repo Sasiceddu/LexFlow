@@ -65,9 +65,6 @@ const workflowSelect = {
     select: phaseSelect,
   },
   transitions: {
-    where: {
-      isActive: true,
-    },
     orderBy: workflowTransitionOrderBy,
     select: transitionSelect,
   },
@@ -262,7 +259,6 @@ export function findWorkflowTransitions(workflowId: string) {
   return prisma.workflowTransition.findMany({
     where: {
       workflowId,
-      isActive: true,
     },
     orderBy: [{ order: 'asc' }, { actionLabel: 'asc' }],
     select: transitionSelect,
@@ -273,7 +269,6 @@ export function findWorkflowTransitionById(id: string) {
   return prisma.workflowTransition.findFirst({
     where: {
       id,
-      isActive: true,
     },
   })
 }

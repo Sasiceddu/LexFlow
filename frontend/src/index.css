@@ -289,6 +289,8 @@ h2 {
 .split-list {
   display: grid;
   gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  min-width: 0;
 }
 
 .expandable-card {
@@ -304,7 +306,7 @@ h2 {
 
 .expandable-card-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   width: 100%;
   min-width: 0;
@@ -316,6 +318,24 @@ h2 {
   font-weight: 800;
   padding: 18px 20px;
   text-align: left;
+}
+
+.expandable-card-heading {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.expandable-card-title {
+  color: var(--color-text);
+}
+
+.expandable-card-description {
+  color: var(--color-muted);
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 .expandable-card-header span:first-child {
@@ -349,6 +369,14 @@ h2 {
 .section-meta {
   font-size: 0.9rem;
   font-weight: 700;
+}
+
+.inner-responsive-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  min-width: 0;
+  width: 100%;
 }
 
 .card-toolbar {
@@ -468,6 +496,7 @@ textarea.ui-input {
 .people-list {
   display: grid;
   gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   min-width: 0;
   margin: 0;
   padding: 0;
@@ -498,6 +527,7 @@ textarea.ui-input {
 .dropdown-menu-list {
   display: grid;
   gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
   min-width: 0;
 }
 
@@ -521,6 +551,7 @@ textarea.ui-input {
 .dropdown-option-list {
   display: grid;
   gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   min-width: 0;
   margin: 0;
   padding: 0;
@@ -541,10 +572,21 @@ textarea.ui-input {
 .configurable-field-list {
   display: grid;
   gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   min-width: 0;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.configurable-field-group {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.configurable-field-group h3 {
+  margin: 0;
 }
 
 .configurable-field-item {
@@ -556,6 +598,15 @@ textarea.ui-input {
   border-radius: 8px;
   background: #fbfcfc;
   overflow-wrap: anywhere;
+}
+
+.is-disabled {
+  background: #f4f6f6;
+  color: var(--color-muted);
+}
+
+.is-disabled strong {
+  color: var(--color-muted);
 }
 
 .workflow-list {

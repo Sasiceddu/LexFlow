@@ -176,8 +176,8 @@ export function DropdownMenusSettingsCard() {
 
   return (
     <ExpandableCard
-      title="Menu a tendina"
-      subtitle="Menu attivi e opzioni collegate, inclusa la regola PEC."
+      title="Menu a tendina personalizzabili"
+      description="Questa sezione serve per gestire le opzioni dei campi configurabili di tipo menu a tendina. Quando crei un campo con scelta da elenco, le alternative disponibili vengono gestite qui e compariranno automaticamente nel relativo campo della pratica."
     >
       <p className="section-meta">
         {joinCountParts([

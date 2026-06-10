@@ -4,21 +4,21 @@ import { Button } from '../../../components/ui/Button'
 import type { WorkflowTransition } from '../../../types/workflow.types'
 
 type WorkflowTransitionListProps = {
-  onDelete: (transition: WorkflowTransition) => void
   onEdit: (transition: WorkflowTransition) => void
+  onToggleActive: (transition: WorkflowTransition) => void
   transitions: WorkflowTransition[]
 }
 
 export function WorkflowTransitionList({
-  onDelete,
   onEdit,
+  onToggleActive,
   transitions,
 }: WorkflowTransitionListProps) {
   if (transitions.length === 0) {
     return (
       <EmptyState
         title="Nessuna transizione"
-        message="Questo workflow non ha ancora transizioni attive."
+        message="Questo workflow non ha ancora transizioni configurate."
       />
     )
   }
@@ -26,7 +26,10 @@ export function WorkflowTransitionList({
   return (
     <ul className="workflow-transition-list">
       {transitions.map((transition) => (
-        <li key={transition.id}>
+        <li
+          key={transition.id}
+          className={transition.isActive ? undefined : 'is-disabled'}
+        >
           <div className="person-summary">
             <strong>{transition.actionLabel}</strong>
             <span>
@@ -34,14 +37,17 @@ export function WorkflowTransitionList({
             </span>
             <span>Ordine: {transition.order}</span>
             <span>Valore tecnico: {transition.technicalKey}</span>
-            {!transition.isActive ? <span>Disattivata</span> : null}
+            <span>{transition.isActive ? 'Attiva' : 'Disattivata'}</span>
           </div>
           <ActionRow>
             <Button onClick={() => onEdit(transition)}>
               Modifica transizione
             </Button>
-            <Button onClick={() => onDelete(transition)} variant="danger">
-              Disattiva transizione
+            <Button
+              onClick={() => onToggleActive(transition)}
+              variant={transition.isActive ? 'danger' : 'primary'}
+            >
+              {transition.isActive ? 'Disattiva' : 'Riattiva'}
             </Button>
           </ActionRow>
         </li>

@@ -4,6 +4,7 @@ import { useDisclosure } from '../../hooks/useDisclosure'
 type ExpandableCardProps = {
   children: ReactNode
   defaultOpen?: boolean
+  description?: string
   subtitle?: string
   title: string
 }
@@ -12,10 +13,12 @@ type ExpandableCardProps = {
 export function ExpandableCard({
   children,
   defaultOpen = false,
+  description,
   subtitle,
   title,
 }: ExpandableCardProps) {
   const disclosure = useDisclosure(defaultOpen)
+  const helperText = description ?? subtitle
 
   return (
     <section className="expandable-card">
@@ -25,7 +28,12 @@ export function ExpandableCard({
         aria-expanded={disclosure.isOpen}
         onClick={disclosure.toggle}
       >
-        <span>{title}</span>
+        <span className="expandable-card-heading">
+          <span className="expandable-card-title">{title}</span>
+          {helperText ? (
+            <span className="expandable-card-description">{helperText}</span>
+          ) : null}
+        </span>
         <span className="expandable-card-indicator" aria-hidden="true">
           {disclosure.isOpen ? 'v' : '>'}
         </span>
@@ -33,7 +41,6 @@ export function ExpandableCard({
 
       {disclosure.isOpen ? (
         <div className="expandable-card-body">
-          {subtitle ? <p className="expandable-card-subtitle">{subtitle}</p> : null}
           {children}
         </div>
       ) : null}

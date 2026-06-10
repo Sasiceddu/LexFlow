@@ -13,7 +13,6 @@ import {
   useCreateWorkflowTransition,
   useDeleteWorkflow,
   useDeleteWorkflowPhase,
-  useDeleteWorkflowTransition,
   useUpdateWorkflow,
   useUpdateWorkflowPhase,
   useUpdateWorkflowTransition,
@@ -52,7 +51,6 @@ type ActiveForm =
 type DeleteTarget =
   | { type: 'workflow'; workflow: Workflow }
   | { phase: WorkflowPhase; type: 'phase' }
-  | { transition: WorkflowTransition; type: 'transition' }
   | null
 
 function getErrorMessage(error: unknown, fallback: string): string {
@@ -119,7 +117,6 @@ export function WorkflowsSettingsCard() {
   const deletePhaseMutation = useDeleteWorkflowPhase()
   const createTransitionMutation = useCreateWorkflowTransition()
   const updateTransitionMutation = useUpdateWorkflowTransition()
-  const deleteTransitionMutation = useDeleteWorkflowTransition()
   const formModal = useDisclosure()
   const deleteDialog = useDisclosure()
   const [activeForm, setActiveForm] = useState<ActiveForm>(null)
@@ -134,8 +131,7 @@ export function WorkflowsSettingsCard() {
     updatePhaseMutation.isPending ||
     deletePhaseMutation.isPending ||
     createTransitionMutation.isPending ||
-    updateTransitionMutation.isPending ||
-    deleteTransitionMutation.isPending
+    updateTransitionMutation.isPending
 
   function openForm(form: ActiveForm) {
     setActiveForm(form)
@@ -242,8 +238,6 @@ export function WorkflowsSettingsCard() {
         await deleteWorkflowMutation.mutateAsync(deleteTarget.workflow.id)
       } else if (deleteTarget.type === 'phase') {
         await deletePhaseMutation.mutateAsync(deleteTarget.phase.id)
-      } else {
-        await deleteTransitionMutation.mutateAsync(deleteTarget.transition.id)
       }
 
       setDeleteTarget(null)
@@ -251,6 +245,21 @@ export function WorkflowsSettingsCard() {
     } catch (error: unknown) {
       setActionError(
         getErrorMessage(error, 'Impossibile completare l operazione.'),
+      )
+    }
+  }
+
+  async function handleToggleTransition(transition: WorkflowTransition) {
+    setActionError(null)
+
+    try {
+      await updateTransitionMutation.mutateAsync({
+        id: transition.id,
+        input: { isActive: !transition.isActive },
+      })
+    } catch (error: unknown) {
+      setActionError(
+        getErrorMessage(error, 'Impossibile aggiornare la transizione.'),
       )
     }
   }
@@ -272,7 +281,7 @@ export function WorkflowsSettingsCard() {
   return (
     <ExpandableCard
       title="Fasi e workflow"
-      subtitle="Workflow attivi, fasi ordinate e transizioni configurate."
+      description="Questa sezione serve per configurare il percorso operativo delle pratiche. Puoi definire le fasi, stabilire quali passaggi sono consentiti da una fase all altra e gestire le transizioni attive o disattivate senza cancellarle definitivamente."
     >
       <p className="section-meta">{getWorkflowCountText(workflows)}</p>
 
@@ -314,10 +323,9 @@ export function WorkflowsSettingsCard() {
                   setDeleteTarget({ phase, type: 'phase' })
                   deleteDialog.open()
                 }}
-                onDeleteTransition={(transition) => {
-                  setDeleteTarget({ transition, type: 'transition' })
-                  deleteDialog.open()
-                }}
+                onToggleTransition={(transition) =>
+                  void handleToggleTransition(transition)
+                }
                 onDeleteWorkflow={(selectedWorkflow) => {
                   setDeleteTarget({
                     type: 'workflow',
@@ -410,9 +418,7 @@ export function WorkflowsSettingsCard() {
             ? `Disattivare il workflow ${deleteTarget.workflow.name}?`
             : deleteTarget?.type === 'phase'
               ? `Cestinare la fase ${deleteTarget.phase.name}?`
-              : deleteTarget?.type === 'transition'
-                ? `Disattivare la transizione ${deleteTarget.transition.actionLabel}?`
-                : 'Confermare l operazione?'
+              : 'Confermare l operazione?'
         }
         confirmLabel={
           deleteTarget?.type === 'phase' ? 'Cestina' : 'Disattiva'

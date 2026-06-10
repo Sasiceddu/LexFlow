@@ -49,6 +49,9 @@ export function findWorkflowPhases() {
     where: {
       deletedAt: null,
       isActive: true,
+      workflow: {
+        isActive: true,
+      },
     },
     orderBy: [{ workflowId: 'asc' }, { order: 'asc' }],
     select: {
@@ -67,7 +70,9 @@ export function findWorkflowPhases() {
 export function findWorkflowTransitions() {
   return prisma.workflowTransition.findMany({
     where: {
-      isActive: true,
+      workflow: {
+        isActive: true,
+      },
     },
     orderBy: [{ workflowId: 'asc' }, { order: 'asc' }],
     select: {
@@ -88,6 +93,7 @@ export function findWorkflowTransitions() {
       actionLabel: true,
       technicalKey: true,
       order: true,
+      isActive: true,
     },
   })
 }

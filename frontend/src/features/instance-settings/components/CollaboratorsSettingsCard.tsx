@@ -29,7 +29,7 @@ export function CollaboratorsSettingsCard() {
   return (
     <ManagedPeopleCard
       title="Collaboratori di giustizia"
-      description="Collaboratori non cestinati collegabili alle pratiche."
+      description="Questa sezione serve per registrare i collaboratori di giustizia e organizzare le pratiche collegate a ciascuno di essi. Puoi inserire nuovi nominativi, modificare quelli esistenti e usare questi dati nelle istanze."
       countText={formatPluralCount(
         collaborators.length,
         'collaboratore',

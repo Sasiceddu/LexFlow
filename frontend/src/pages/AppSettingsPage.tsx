@@ -11,7 +11,7 @@ export function AppSettingsPage() {
       <div className="expandable-section-list settings-section-list">
         <ExpandableCard
           title="Preferenze applicazione"
-          subtitle="Area pronta per le configurazioni tecniche dell'app desktop locale."
+          description="Area pronta per le configurazioni tecniche dell'app desktop locale."
         >
           <EmptyState
             title="Sezione Impostazioni app pronta"

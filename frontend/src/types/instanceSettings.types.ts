@@ -36,6 +36,7 @@ export type WorkflowTransitionOverviewItem = {
     name: string
   }
   id: string
+  isActive: boolean
   order: number
   technicalKey: string
   toPhaseId: string

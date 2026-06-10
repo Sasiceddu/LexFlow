@@ -31,7 +31,7 @@ export function ProfessionalsSettingsCard() {
   return (
     <ManagedPeopleCard
       title="Professionisti"
-      description="Professionisti non cestinati disponibili per le pratiche."
+      description="Questa sezione serve per inserire e gestire i professionisti che potranno essere collegati alle istanze. Da qui puoi aggiungere nuovi professionisti, modificare quelli gia inseriti o aggiornare le informazioni che saranno richiamate durante la creazione e gestione delle pratiche."
       countText={formatPluralCount(
         professionals.length,
         'professionista',

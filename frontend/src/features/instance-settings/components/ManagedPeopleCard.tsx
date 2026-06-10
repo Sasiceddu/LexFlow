@@ -114,7 +114,7 @@ export function ManagedPeopleCard<TPerson extends EditablePerson>({
   return (
     <ExpandableCard
       title={title}
-      subtitle={description}
+      description={description}
     >
       <p className="section-meta">{countText}</p>
 

@@ -118,7 +118,7 @@ export function ConfigurableFieldsSettingsCard() {
   return (
     <ExpandableCard
       title="Campi configurabili"
-      subtitle="Campi attivi divisi tra ambito generale e ambito fase."
+      description="Questa sezione serve per personalizzare i dati da raccogliere nelle pratiche. Puoi aggiungere nuovi campi, modificarli, spostarli nelle sezioni corrette e decidere se devono comparire in tabelle, filtri o esportazioni."
     >
       <p className="section-meta">
         {formatPluralCount(fields.length, 'campo', 'campi')}

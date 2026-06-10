@@ -13,7 +13,6 @@ type WorkflowItemProps = {
   onAddPhase: (workflow: Workflow) => void
   onAddTransition: (workflow: Workflow) => void
   onDeletePhase: (phase: WorkflowPhase) => void
-  onDeleteTransition: (transition: WorkflowTransition) => void
   onDeleteWorkflow: (workflow: Workflow) => void
   onEditPhase: (workflow: Workflow, phase: WorkflowPhase) => void
   onEditTransition: (
@@ -21,6 +20,7 @@ type WorkflowItemProps = {
     transition: WorkflowTransition,
   ) => void
   onEditWorkflow: (workflow: Workflow) => void
+  onToggleTransition: (transition: WorkflowTransition) => void
   workflow: Workflow
 }
 
@@ -46,11 +46,11 @@ export function WorkflowItem({
   onAddPhase,
   onAddTransition,
   onDeletePhase,
-  onDeleteTransition,
   onDeleteWorkflow,
   onEditPhase,
   onEditTransition,
   onEditWorkflow,
+  onToggleTransition,
   workflow,
 }: WorkflowItemProps) {
   return (
@@ -101,8 +101,8 @@ export function WorkflowItem({
           </div>
           <WorkflowTransitionList
             transitions={workflow.transitions}
-            onDelete={onDeleteTransition}
             onEdit={(transition) => onEditTransition(workflow, transition)}
+            onToggleActive={onToggleTransition}
           />
         </section>
       </div>

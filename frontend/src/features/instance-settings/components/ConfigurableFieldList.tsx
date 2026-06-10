@@ -15,25 +15,33 @@ export function ConfigurableFieldList({
   onEdit,
   scope,
 }: ConfigurableFieldListProps) {
+  const title = scope === 'GENERAL' ? 'Campi generali' : 'Campi per fase'
+
   if (fields.length === 0) {
     return (
-      <EmptyState
-        title={`Nessun campo ${scope}`}
-        message={`Non sono presenti campi configurabili ${scope}.`}
-      />
+      <section className="configurable-field-group">
+        <h3>{title}</h3>
+        <EmptyState
+          title={`Nessun campo ${scope}`}
+          message={`Non sono presenti campi configurabili ${scope}.`}
+        />
+      </section>
     )
   }
 
   return (
-    <ul className="configurable-field-list">
-      {fields.map((field) => (
-        <ConfigurableFieldItem
-          key={field.id}
-          field={field}
-          onDelete={onDelete}
-          onEdit={onEdit}
-        />
-      ))}
-    </ul>
+    <section className="configurable-field-group">
+      <h3>{title}</h3>
+      <ul className="configurable-field-list">
+        {fields.map((field) => (
+          <ConfigurableFieldItem
+            key={field.id}
+            field={field}
+            onDelete={onDelete}
+            onEdit={onEdit}
+          />
+        ))}
+      </ul>
+    </section>
   )
 }
