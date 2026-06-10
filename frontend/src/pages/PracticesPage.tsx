@@ -4,9 +4,11 @@ import { ActionRow } from '../components/shared/ActionRow'
 import { ErrorMessage } from '../components/shared/ErrorMessage'
 import { LoadingSpinner } from '../components/shared/LoadingSpinner'
 import { Button } from '../components/ui/Button'
+import { CreatePracticeModal } from '../features/practices/components/CreatePracticeModal'
 import { PracticeFiltersBar } from '../features/practices/components/PracticeFiltersBar'
 import { PracticesPagination } from '../features/practices/components/PracticesPagination'
 import { PracticesTable } from '../features/practices/components/PracticesTable'
+import { useDisclosure } from '../hooks/useDisclosure'
 import { useInstanceSettingsOverview } from '../hooks/useInstanceSettingsOverview'
 import { usePractices } from '../hooks/usePractices'
 import type { PracticeFilters } from '../types/practice.types'
@@ -18,6 +20,7 @@ export function PracticesPage() {
   })
   const practicesQuery = usePractices(filters)
   const settingsQuery = useInstanceSettingsOverview()
+  const createPracticeModal = useDisclosure()
   const practices = practicesQuery.data?.items ?? []
   const pagination = practicesQuery.data?.pagination
 
@@ -28,8 +31,8 @@ export function PracticesPage() {
     >
       <div className="practice-page-stack">
         <ActionRow>
-          <Button disabled variant="primary">
-            Nuova pratica - disponibile nel prossimo passaggio
+          <Button onClick={createPracticeModal.open} variant="primary">
+            Nuova pratica
           </Button>
         </ActionRow>
 
@@ -76,6 +79,13 @@ export function PracticesPage() {
             ) : null}
           </>
         ) : null}
+
+        <CreatePracticeModal
+          collaborators={settingsQuery.data?.collaborators ?? []}
+          isOpen={createPracticeModal.isOpen}
+          onClose={createPracticeModal.close}
+          professionals={settingsQuery.data?.professionals ?? []}
+        />
       </div>
     </PageContainer>
   )

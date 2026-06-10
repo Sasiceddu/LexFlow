@@ -1,3 +1,41 @@
+import type { Prisma } from '../../generated/prisma/client'
+
+export type JsonPrimitive = boolean | number | string | null
+export type JsonValue = JsonPrimitive | JsonObject | JsonValue[]
+export type JsonObject = {
+  [key: string]: JsonValue
+}
+
+export type CreatePracticePayload = {
+  activityType?: string | null
+  collaboratorId?: string | null
+  customData?: JsonObject
+  depositDate?: Date | null
+  hearingDate: Date
+  judicialAuthority?: string | null
+  notes?: string | null
+  office?: string | null
+  professionalId?: string | null
+  requestedAmount?: string | null
+}
+
+export type PracticeCreateData = {
+  activityType: string | null
+  code: string
+  collaboratorId: string | null
+  customData: Prisma.InputJsonValue | undefined
+  depositDate: Date | null
+  hearingDate: Date
+  judicialAuthority: string | null
+  name: string
+  notes: string | null
+  office: string | null
+  professionalId: string | null
+  requestedAmount: string | null
+  currentPhaseId: string
+  workflowId: string
+}
+
 export type PracticeListFilters = {
   collaboratorId?: string
   page: number
@@ -37,3 +75,5 @@ export type PracticeListResponse = {
   items: PracticeListItem[]
   pagination: PracticeListPagination
 }
+
+export type PracticeCreatedHistoryData = JsonObject

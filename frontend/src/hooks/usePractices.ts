@@ -1,6 +1,9 @@
-import { useQuery } from '@tanstack/react-query'
-import { getPractices } from '../api/practicesApi'
-import type { PracticeFilters } from '../types/practice.types'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createPractice, getPractices } from '../api/practicesApi'
+import type {
+  CreatePracticePayload,
+  PracticeFilters,
+} from '../types/practice.types'
 import { practicesQueryKey } from './queryKeys'
 
 function normalizeFilterValue(value: string | undefined): string | undefined {
@@ -27,5 +30,16 @@ export function usePractices(filters: PracticeFilters = {}) {
     queryKey: [...practicesQueryKey, normalizedFilters],
     queryFn: ({ signal }) =>
       getPractices({ filters: normalizedFilters, signal }),
+  })
+}
+
+export function useCreatePractice() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: CreatePracticePayload) => createPractice(payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: practicesQueryKey })
+    },
   })
 }

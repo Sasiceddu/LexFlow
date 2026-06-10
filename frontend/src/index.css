@@ -700,6 +700,47 @@ textarea.ui-input {
   gap: 8px;
 }
 
+.practice-configurable-fields {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.practice-form-section {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.practice-form-section h3 {
+  margin: 0;
+}
+
+.practice-form-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  min-width: 0;
+}
+
+.dynamic-field-stack {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.dynamic-field-file-note {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  background: #fbfcfc;
+  color: var(--color-muted);
+  overflow-wrap: anywhere;
+}
+
 .table-scroll {
   width: 100%;
   min-width: 0;

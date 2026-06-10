@@ -1,6 +1,8 @@
 import { apiClient } from './apiClient'
 import type {
+  CreatePracticePayload,
   PracticeFilters,
+  PracticeListItem,
   PracticeListResponse,
 } from '../types/practice.types'
 
@@ -44,4 +46,10 @@ export function getPractices({
     `/api/practices${buildPracticeQuery(filters)}`,
     { signal },
   )
+}
+
+export function createPractice(
+  payload: CreatePracticePayload,
+): Promise<PracticeListItem> {
+  return apiClient.post<PracticeListItem>('/api/practices', { body: payload })
 }

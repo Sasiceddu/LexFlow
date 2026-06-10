@@ -5,6 +5,12 @@ export type Pagination = {
   totalPages: number
 }
 
+export type JsonPrimitive = boolean | number | string | null
+export type JsonValue = JsonPrimitive | JsonObject | JsonValue[]
+export type JsonObject = {
+  [key: string]: JsonValue
+}
+
 export type PracticeListItem = {
   activityType: string | null
   code: string
@@ -36,4 +42,17 @@ export type PracticeFilters = {
   phaseId?: string
   professionalId?: string
   search?: string
+}
+
+export type CreatePracticePayload = {
+  activityType?: string | null
+  collaboratorId?: string | null
+  customData?: JsonObject
+  depositDate?: string | null
+  hearingDate: string
+  judicialAuthority?: string | null
+  notes?: string | null
+  office?: string | null
+  professionalId?: string | null
+  requestedAmount?: string | null
 }
