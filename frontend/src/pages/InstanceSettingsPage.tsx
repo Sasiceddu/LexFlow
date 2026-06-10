@@ -5,11 +5,10 @@ import { LoadingSpinner } from '../components/shared/LoadingSpinner'
 import { SectionList } from '../components/shared/SectionList'
 import { ExpandableCard } from '../components/ui/ExpandableCard'
 import { CollaboratorsSettingsCard } from '../features/instance-settings/components/CollaboratorsSettingsCard'
+import { DropdownMenusSettingsCard } from '../features/instance-settings/components/DropdownMenusSettingsCard'
 import { ProfessionalsSettingsCard } from '../features/instance-settings/components/ProfessionalsSettingsCard'
 import { useInstanceSettingsOverview } from '../hooks/useInstanceSettingsOverview'
 import type {
-  DropdownMenuOverviewItem,
-  DropdownOptionOverviewItem,
   InstanceSettingsOverview,
   WorkflowOverviewItem,
 } from '../types/instanceSettings.types'
@@ -61,31 +60,11 @@ function getTransitionItems(
     : visibleTransitions
 }
 
-function getMenuSummary(
-  menu: DropdownMenuOverviewItem,
-  options: DropdownOptionOverviewItem[],
-): string {
-  const optionLabels = options.map((option) =>
-    option.triggersPecBlock ? `${option.label} (blocco PEC)` : option.label,
-  )
-
-  return optionLabels.length > 0
-    ? `${menu.name}: ${optionLabels.join(', ')}`
-    : `${menu.name}: nessuna opzione attiva`
-}
-
 function getWorkflowCountText(data: InstanceSettingsOverview): string {
   return joinCountParts([
     formatPluralCount(data.workflows.length, 'workflow', 'workflow'),
     formatPluralCount(data.phases.length, 'fase', 'fasi'),
     formatPluralCount(data.transitions.length, 'transizione', 'transizioni'),
-  ])
-}
-
-function getMenuCountText(data: InstanceSettingsOverview): string {
-  return joinCountParts([
-    formatPluralCount(data.dropdownMenus.length, 'menu', 'menu'),
-    formatPluralCount(data.dropdownOptions.length, 'opzione', 'opzioni'),
   ])
 }
 
@@ -176,22 +155,7 @@ export function InstanceSettingsPage() {
             )}
           </ExpandableCard>
 
-          <ExpandableCard
-            title="Menu a tendina"
-            subtitle="Menu attivi e opzioni collegate, inclusa la regola PEC."
-          >
-            <p className="section-meta">{getMenuCountText(data)}</p>
-            <SectionList
-              items={data.dropdownMenus.map((menu) =>
-                getMenuSummary(
-                  menu,
-                  data.dropdownOptions.filter((option) => option.menuId === menu.id),
-                ),
-              )}
-              emptyTitle="Nessun menu"
-              emptyMessage="Non sono presenti menu a tendina attivi nel database locale."
-            />
-          </ExpandableCard>
+          <DropdownMenusSettingsCard />
         </div>
       ) : null}
     </PageContainer>

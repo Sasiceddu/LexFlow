@@ -400,6 +400,12 @@ h2 {
   background: #fbfcfc;
 }
 
+.stack-form {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
 .form-grid {
   display: grid;
   gap: 12px;
@@ -487,6 +493,49 @@ textarea.ui-input {
   margin: 0;
   color: var(--color-muted);
   font-size: 0.9rem;
+}
+
+.dropdown-menu-list {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.dropdown-menu-item {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: #fbfcfc;
+  overflow-wrap: anywhere;
+}
+
+.dropdown-menu-item-header {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.dropdown-option-list {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dropdown-option-list li {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-panel);
+  overflow-wrap: anywhere;
 }
 
 .loading-spinner {
