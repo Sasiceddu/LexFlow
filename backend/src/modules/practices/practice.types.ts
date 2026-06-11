@@ -77,3 +77,74 @@ export type PracticeListResponse = {
 }
 
 export type PracticeCreatedHistoryData = JsonObject
+
+export type PracticeRelatedPerson = {
+  id: string
+  displayName: string
+}
+
+export type PracticeRelatedWorkflow = {
+  id: string
+  name: string
+  isDefault: boolean
+}
+
+export type PracticeRelatedPhase = {
+  id: string
+  name: string
+  technicalKey: string
+  category: string
+  isInitial: boolean
+  isFinal: boolean
+  isActive: boolean
+}
+
+export type PracticeAvailableTransition = {
+  id: string
+  actionLabel: string
+  fromPhaseId: string
+  toPhaseId: string
+  toPhaseName: string
+  order: number
+}
+
+export type PracticeHistoryPhaseRef = {
+  id: string
+  name: string
+}
+
+export type PracticeHistoryItem = {
+  id: string
+  eventType: string
+  title: string
+  description: string | null
+  fromPhase: PracticeHistoryPhaseRef | null
+  toPhase: PracticeHistoryPhaseRef | null
+  data: JsonObject | null
+  createdAt: Date
+}
+
+export type PracticeDetail = {
+  id: string
+  code: string
+  name: string
+  activityType: string | null
+  hearingDate: Date | null
+  depositDate: Date | null
+  office: string | null
+  judicialAuthority: string | null
+  requestedAmount: string | null
+  grantedAmount: string | null
+  invoicedAmount: string | null
+  liquidatedAmount: string | null
+  notes: string | null
+  customData: JsonObject | null
+  createdAt: Date
+  updatedAt: Date
+  collaborator: PracticeRelatedPerson | null
+  professional: PracticeRelatedPerson | null
+  workflow: PracticeRelatedWorkflow
+  currentPhase: PracticeRelatedPhase
+  histories: PracticeHistoryItem[]
+  availableTransitions: PracticeAvailableTransition[]
+}

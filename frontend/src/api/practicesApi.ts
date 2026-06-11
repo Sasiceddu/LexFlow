@@ -1,6 +1,7 @@
 import { apiClient } from './apiClient'
 import type {
   CreatePracticePayload,
+  PracticeDetail,
   PracticeFilters,
   PracticeListItem,
   PracticeListResponse,
@@ -8,6 +9,10 @@ import type {
 
 type GetPracticesOptions = {
   filters?: PracticeFilters
+  signal?: AbortSignal
+}
+
+type GetByIdOptions = {
   signal?: AbortSignal
 }
 
@@ -52,4 +57,11 @@ export function createPractice(
   payload: CreatePracticePayload,
 ): Promise<PracticeListItem> {
   return apiClient.post<PracticeListItem>('/api/practices', { body: payload })
+}
+
+export function getPracticeById(
+  id: string,
+  { signal }: GetByIdOptions = {},
+): Promise<PracticeDetail> {
+  return apiClient.get<PracticeDetail>(`/api/practices/${id}`, { signal })
 }

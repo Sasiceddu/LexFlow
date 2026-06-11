@@ -8,13 +8,16 @@ import {
   findDefaultWorkflowWithInitialPhase,
   findPracticeByCode,
   findPracticeCodesByYear,
+  findPracticeDetailById,
   findPractices,
   findProfessionalById,
+  mapPracticeDetail,
   mapPracticeListItem,
 } from './practice.repository'
 import type {
   CreatePracticePayload,
   JsonObject,
+  PracticeDetail,
   PracticeListFilters,
   PracticeListItem,
   PracticeListResponse,
@@ -193,4 +196,14 @@ export async function addPractice(body: unknown): Promise<PracticeListItem> {
   } catch (error: unknown) {
     throw toAppError(error, 'Dati pratica non validi.')
   }
+}
+
+export async function getPracticeById(id: string): Promise<PracticeDetail> {
+  const practice = await findPracticeDetailById(id)
+
+  if (!practice) {
+    throw new AppError('Pratica non trovata.', 404)
+  }
+
+  return mapPracticeDetail(practice)
 }

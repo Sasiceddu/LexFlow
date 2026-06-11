@@ -1,7 +1,10 @@
 import { prisma } from '../../database/prismaClient'
+import type { Prisma } from '../../generated/prisma/client'
 import type {
+  JsonObject,
   PracticeCreatedHistoryData,
   PracticeCreateData,
+  PracticeDetail,
   PracticeListFilters,
   PracticeListItem,
 } from './practice.types'
@@ -45,8 +48,106 @@ const practiceListSelect = {
   },
 } as const
 
+const practiceDetailSelect = {
+  activityType: true,
+  code: true,
+  collaborator: {
+    select: {
+      displayName: true,
+      id: true,
+    },
+  },
+  createdAt: true,
+  currentPhase: {
+    select: {
+      category: true,
+      id: true,
+      isActive: true,
+      isFinal: true,
+      isInitial: true,
+      name: true,
+      technicalKey: true,
+      transitionsFromPhase: {
+        orderBy: { order: 'asc' },
+        select: {
+          actionLabel: true,
+          fromPhaseId: true,
+          id: true,
+          order: true,
+          toPhase: {
+            select: {
+              name: true,
+            },
+          },
+          toPhaseId: true,
+        },
+        where: {
+          isActive: true,
+        },
+      },
+    },
+  },
+  customData: true,
+  depositDate: true,
+  grantedAmount: true,
+  hearingDate: true,
+  histories: {
+    orderBy: { createdAt: 'asc' },
+    select: {
+      createdAt: true,
+      data: true,
+      description: true,
+      eventType: true,
+      fromPhase: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      id: true,
+      title: true,
+      toPhase: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  },
+  id: true,
+  invoicedAmount: true,
+  judicialAuthority: true,
+  liquidatedAmount: true,
+  name: true,
+  notes: true,
+  office: true,
+  professional: {
+    select: {
+      displayName: true,
+      id: true,
+    },
+  },
+  requestedAmount: true,
+  updatedAt: true,
+  workflow: {
+    select: {
+      id: true,
+      isDefault: true,
+      name: true,
+    },
+  },
+} as const
+
 function toDecimalString(value: { toString: () => string } | null): string | null {
   return value ? value.toString() : null
+}
+
+function toJsonObject(value: Prisma.JsonValue | null): JsonObject | null {
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return value as JsonObject
+  }
+
+  return null
 }
 
 function buildPracticeWhere(filters: PracticeListFilters): PracticeWhereInput {
@@ -239,5 +340,70 @@ export function mapPracticeListItem(
     requestedAmount: toDecimalString(practice.requestedAmount),
     updatedAt: practice.updatedAt,
     workflowName: practice.workflow.name,
+  }
+}
+
+export function findPracticeDetailById(id: string) {
+  return prisma.practice.findFirst({
+    select: practiceDetailSelect,
+    where: {
+      deletedAt: null,
+      id,
+    },
+  })
+}
+
+export function mapPracticeDetail(
+  practice: NonNullable<Awaited<ReturnType<typeof findPracticeDetailById>>>,
+): PracticeDetail {
+  const { currentPhase } = practice
+
+  return {
+    activityType: practice.activityType,
+    availableTransitions: currentPhase.transitionsFromPhase.map((transition) => ({
+      actionLabel: transition.actionLabel,
+      fromPhaseId: transition.fromPhaseId,
+      id: transition.id,
+      order: transition.order,
+      toPhaseId: transition.toPhaseId,
+      toPhaseName: transition.toPhase.name,
+    })),
+    code: practice.code,
+    collaborator: practice.collaborator,
+    createdAt: practice.createdAt,
+    currentPhase: {
+      category: currentPhase.category,
+      id: currentPhase.id,
+      isActive: currentPhase.isActive,
+      isFinal: currentPhase.isFinal,
+      isInitial: currentPhase.isInitial,
+      name: currentPhase.name,
+      technicalKey: currentPhase.technicalKey,
+    },
+    customData: toJsonObject(practice.customData),
+    depositDate: practice.depositDate,
+    grantedAmount: toDecimalString(practice.grantedAmount),
+    hearingDate: practice.hearingDate,
+    histories: practice.histories.map((history) => ({
+      createdAt: history.createdAt,
+      data: toJsonObject(history.data),
+      description: history.description,
+      eventType: history.eventType,
+      fromPhase: history.fromPhase,
+      id: history.id,
+      title: history.title,
+      toPhase: history.toPhase,
+    })),
+    id: practice.id,
+    invoicedAmount: toDecimalString(practice.invoicedAmount),
+    judicialAuthority: practice.judicialAuthority,
+    liquidatedAmount: toDecimalString(practice.liquidatedAmount),
+    name: practice.name,
+    notes: practice.notes,
+    office: practice.office,
+    professional: practice.professional,
+    requestedAmount: toDecimalString(practice.requestedAmount),
+    updatedAt: practice.updatedAt,
+    workflow: practice.workflow,
   }
 }
