@@ -1,5 +1,7 @@
 import { apiClient } from './apiClient'
 import type {
+  AdvancePracticePayload,
+  AdvancePracticeResponse,
   CreatePracticePayload,
   PracticeDetail,
   PracticeFilters,
@@ -64,4 +66,13 @@ export function getPracticeById(
   { signal }: GetByIdOptions = {},
 ): Promise<PracticeDetail> {
   return apiClient.get<PracticeDetail>(`/api/practices/${id}`, { signal })
+}
+
+export function advancePractice(
+  id: string,
+  payload: AdvancePracticePayload,
+): Promise<AdvancePracticeResponse> {
+  return apiClient.post<AdvancePracticeResponse>(`/api/practices/${id}/advance`, {
+    body: payload,
+  })
 }

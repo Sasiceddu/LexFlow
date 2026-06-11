@@ -11,7 +11,7 @@ import { PracticeDetailHeader } from '../features/practices/components/PracticeD
 import { PracticeGeneralInfoCard } from '../features/practices/components/PracticeGeneralInfoCard'
 import { PracticeHistoryList } from '../features/practices/components/PracticeHistoryList'
 import { PracticePeopleCard } from '../features/practices/components/PracticePeopleCard'
-import { PracticeWorkflowReadOnlyCard } from '../features/practices/components/PracticeWorkflowReadOnlyCard'
+import { PracticeWorkflowCard } from '../features/practices/components/PracticeWorkflowCard'
 import { usePracticeDetail } from '../hooks/usePracticeDetail'
 
 export function PracticeDetailPage() {
@@ -72,7 +72,7 @@ function PracticeDetailContent({ id }: { id: string }) {
               <PracticePeopleCard practice={practice} />
               <PracticeAmountsCard practice={practice} />
             </div>
-            <PracticeWorkflowReadOnlyCard practice={practice} />
+            <PracticeWorkflowCard practice={practice} />
             <PracticeCustomDataCard customData={practice.customData} />
             <PracticeHistoryList histories={practice.histories} />
           </>

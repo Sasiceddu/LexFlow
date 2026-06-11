@@ -2,27 +2,36 @@ import { AppError } from '../../errors/AppError'
 import type { Prisma } from '../../generated/prisma/client'
 import {
   countPractices,
+  createPhaseChangedHistoryEvent,
   createPractice,
   createPracticeHistoryEvent,
+  findActiveDropdownOptionValues,
   findCollaboratorById,
   findDefaultWorkflowWithInitialPhase,
+  findPhaseFields,
   findPracticeByCode,
   findPracticeCodesByYear,
   findPracticeDetailById,
+  findPracticeForAdvance,
   findPractices,
   findProfessionalById,
+  findTransitionForAdvance,
   mapPracticeDetail,
   mapPracticeListItem,
+  toJsonObject,
+  updatePracticePhase,
 } from './practice.repository'
 import type {
   CreatePracticePayload,
   JsonObject,
+  JsonValue,
   PracticeDetail,
   PracticeListFilters,
   PracticeListItem,
   PracticeListResponse,
 } from './practice.types'
 import {
+  advancePracticeSchema,
   practiceCreateSchema,
   practiceListQuerySchema,
   type PracticeCreateInput,
@@ -206,4 +215,123 @@ export async function getPracticeById(id: string): Promise<PracticeDetail> {
   }
 
   return mapPracticeDetail(practice)
+}
+
+function isFilledJsonValue(value: JsonValue | undefined): boolean {
+  if (value === undefined || value === null) {
+    return false
+  }
+
+  if (typeof value === 'string') {
+    return value.trim().length > 0
+  }
+
+  return true
+}
+
+async function assertPhaseDataIsValid(
+  phaseId: string,
+  phaseData: JsonObject,
+): Promise<void> {
+  const phaseFields = await findPhaseFields(phaseId)
+  const dropdownMenuIds = phaseFields
+    .map((field) => field.dropdownMenuId)
+    .filter((menuId): menuId is string => Boolean(menuId))
+  const activeOptions =
+    dropdownMenuIds.length > 0
+      ? await findActiveDropdownOptionValues(dropdownMenuIds)
+      : []
+
+  for (const field of phaseFields) {
+    const value = phaseData[field.technicalKey]
+
+    if (field.isRequired && !isFilledJsonValue(value)) {
+      throw new AppError(`Il campo "${field.label}" e obbligatorio.`, 400)
+    }
+
+    if (field.fieldType === 'DROPDOWN' && field.dropdownMenuId && isFilledJsonValue(value)) {
+      const validValues = activeOptions
+        .filter((option) => option.menuId === field.dropdownMenuId)
+        .map((option) => option.value)
+
+      if (typeof value !== 'string' || !validValues.includes(value)) {
+        throw new AppError(`Il valore selezionato per "${field.label}" non e valido.`, 400)
+      }
+    }
+  }
+}
+
+export async function advancePractice(id: string, body: unknown): Promise<PracticeDetail> {
+  try {
+    const input = advancePracticeSchema.parse(body)
+    const practice = await findPracticeForAdvance(id)
+
+    if (!practice) {
+      throw new AppError('Pratica non trovata.', 404)
+    }
+
+    const transition = await findTransitionForAdvance(input.transitionId)
+
+    if (!transition) {
+      throw new AppError('Transizione non trovata.', 404)
+    }
+
+    if (!transition.isActive) {
+      throw new AppError('La transizione selezionata non e attiva.', 400)
+    }
+
+    if (transition.workflowId !== practice.workflowId) {
+      throw new AppError('La transizione non appartiene al workflow della pratica.', 400)
+    }
+
+    if (transition.fromPhaseId !== practice.currentPhaseId) {
+      throw new AppError(
+        'La transizione non e disponibile dalla fase corrente della pratica.',
+        400,
+      )
+    }
+
+    if (!transition.toPhase || transition.toPhase.deletedAt || !transition.toPhase.isActive) {
+      throw new AppError('La fase di destinazione non e valida.', 400)
+    }
+
+    const phaseData = (input.phaseData as JsonObject | undefined) ?? {}
+
+    await assertPhaseDataIsValid(transition.toPhaseId, phaseData)
+
+    const mergedCustomData: JsonObject = {
+      ...(toJsonObject(practice.customData) ?? {}),
+      ...phaseData,
+    }
+
+    await updatePracticePhase({
+      customData: mergedCustomData as Prisma.InputJsonValue,
+      id: practice.id,
+      toPhaseId: transition.toPhaseId,
+    })
+
+    await createPhaseChangedHistoryEvent({
+      data: {
+        phaseData,
+        transitionId: transition.id,
+        transitionLabel: transition.actionLabel,
+        ...(input.occurredAt ? { occurredAt: input.occurredAt.toISOString() } : {}),
+      },
+      description: input.notes ?? null,
+      fromPhaseId: practice.currentPhaseId,
+      practiceId: practice.id,
+      title: transition.actionLabel || 'Fase aggiornata',
+      toPhaseId: transition.toPhaseId,
+    })
+
+    const updated = await findPracticeDetailById(practice.id)
+
+    if (!updated) {
+      throw new AppError('Pratica non trovata.', 404)
+    }
+
+    return mapPracticeDetail(updated)
+  } catch (error: unknown) {
+    throw toAppError(error, 'Impossibile avanzare la pratica.')
+  }
 }

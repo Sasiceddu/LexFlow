@@ -139,5 +139,16 @@ export const practiceCreateSchema = z.object({
   requestedAmount: optionalAmount,
 })
 
+export const advancePracticeSchema = z.object({
+  notes: optionalText,
+  occurredAt: optionalDate,
+  phaseData: z.record(z.string(), jsonValueSchema).optional(),
+  transitionId: z
+    .string()
+    .trim()
+    .min(1, 'Identificativo transizione obbligatorio.'),
+})
+
 export type PracticeListQueryInput = z.infer<typeof practiceListQuerySchema>
 export type PracticeCreateInput = z.infer<typeof practiceCreateSchema>
+export type AdvancePracticeInput = z.infer<typeof advancePracticeSchema>

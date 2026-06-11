@@ -142,7 +142,7 @@ function toDecimalString(value: { toString: () => string } | null): string | nul
   return value ? value.toString() : null
 }
 
-function toJsonObject(value: Prisma.JsonValue | null): JsonObject | null {
+export function toJsonObject(value: Prisma.JsonValue | null): JsonObject | null {
   if (value && typeof value === 'object' && !Array.isArray(value)) {
     return value as JsonObject
   }
@@ -406,4 +406,119 @@ export function mapPracticeDetail(
     updatedAt: practice.updatedAt,
     workflow: practice.workflow,
   }
+}
+
+export function findPracticeForAdvance(id: string) {
+  return prisma.practice.findFirst({
+    where: {
+      deletedAt: null,
+      id,
+    },
+    select: {
+      currentPhaseId: true,
+      customData: true,
+      id: true,
+      workflowId: true,
+    },
+  })
+}
+
+export function findTransitionForAdvance(id: string) {
+  return prisma.workflowTransition.findFirst({
+    where: { id },
+    select: {
+      actionLabel: true,
+      fromPhaseId: true,
+      id: true,
+      isActive: true,
+      toPhase: {
+        select: {
+          deletedAt: true,
+          isActive: true,
+        },
+      },
+      toPhaseId: true,
+      workflowId: true,
+    },
+  })
+}
+
+export function findPhaseFields(phaseId: string) {
+  return prisma.configurableField.findMany({
+    where: {
+      deletedAt: null,
+      isActive: true,
+      phaseId,
+      scope: 'PHASE',
+    },
+    orderBy: [{ sectionKey: 'asc' }, { order: 'asc' }],
+    select: {
+      dropdownMenuId: true,
+      fieldType: true,
+      id: true,
+      isRequired: true,
+      label: true,
+      technicalKey: true,
+    },
+  })
+}
+
+export function findActiveDropdownOptionValues(menuIds: string[]) {
+  return prisma.dropdownOption.findMany({
+    where: {
+      deletedAt: null,
+      isActive: true,
+      menuId: { in: menuIds },
+    },
+    select: {
+      menuId: true,
+      value: true,
+    },
+  })
+}
+
+export async function updatePracticePhase({
+  customData,
+  id,
+  toPhaseId,
+}: {
+  customData: Prisma.InputJsonValue
+  id: string
+  toPhaseId: string
+}) {
+  await prisma.practice.update({
+    where: { id },
+    data: {
+      currentPhaseId: toPhaseId,
+      customData,
+    },
+  })
+}
+
+export function createPhaseChangedHistoryEvent({
+  data,
+  description,
+  fromPhaseId,
+  practiceId,
+  title,
+  toPhaseId,
+}: {
+  data: JsonObject
+  description: string | null
+  fromPhaseId: string
+  practiceId: string
+  title: string
+  toPhaseId: string
+}) {
+  return prisma.practiceHistory.create({
+    data: {
+      data: data as Prisma.InputJsonValue,
+      description,
+      eventType: 'PHASE_CHANGED',
+      fromPhaseId,
+      practiceId,
+      title,
+      toPhaseId,
+    },
+  })
 }

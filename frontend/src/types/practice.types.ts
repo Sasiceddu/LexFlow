@@ -127,3 +127,14 @@ export type PracticeDetail = {
   histories: PracticeHistoryItem[]
   availableTransitions: PracticeAvailableTransition[]
 }
+
+export type PracticePhaseData = JsonObject
+
+export type AdvancePracticePayload = {
+  transitionId: string
+  occurredAt?: string
+  notes?: string
+  phaseData?: PracticePhaseData
+}
+
+export type AdvancePracticeResponse = PracticeDetail
